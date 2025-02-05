@@ -1,0 +1,102 @@
+\documentclass{article}
+\usepackage{hyperref}
+
+\title{Software Requirement Specification (SRS)}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\newpage
+\section{Introduction}
+  \subsection{Purpose}
+  The purpose of the Hobby-Based Social Media App/Website is to create a dynamic platform where college students can build meaningful connections based on shared interests, hobbies, and lifestyles. By leveraging advanced matching algorithms and institution-exclusive access, the platform ensures a secure and judgment-free space for social interaction. It aims to mitigate the challenges of social isolation and mismatched friend groups by enabling students to form organic, interest-driven friendships. Through anonymous matching, group formations, and interactive preferences, the app fosters genuine connections, making it easier for students to find like-minded peers within their academic community.
+  \subsection{Scope}
+  The Hobby-Based Social Media App/Website is designed to facilitate meaningful connections among college students by matching individuals based on shared interests, hobbies, and lifestyles. The platform ensures an inclusive and judgment-free environment, helping users build friendships that align with their social preferences.
+
+\subsection{In Scope}
+\begin{itemize}
+    \item \textbf{Institution-Exclusive Access} – Users must log in using their institution ID, ensuring a trusted and secure community.
+    \item \textbf{Anonymous Matching} – Initial interactions remain anonymous until users choose to reveal their identity, promoting unbiased connections.
+    \item \textbf{Customizable Preferences} – Users answer interactive questions spanning various categories such as sports, music, academics, dietary choices, and social habits to enhance compatibility.
+    \item \textbf{Automated Friend Group Formation} – The system dynamically creates groups based on mutual interests using a fairness-driven unit circle model.
+    \item \textbf{Advanced Matching Algorithms} – Compatibility is computed through a weighted scoring system, ensuring accurate recommendations.
+    \item \textbf{Dynamic Chat Features} – Users can chat anonymously, rename matches, and confirm friendships within a secure messaging environment.
+    \item \textbf{Graph-Based Recommendations} – The system suggests new connections based on mutual friends and shared interests, fostering organic social growth.
+\end{itemize}
+
+\subsection{Out of Scope}
+\begin{itemize}
+    \item Direct messaging outside the platform.
+    \item Integration with external social media platforms.
+    \item Real-time location tracking of users.
+    \item Non-institutional users without verified credentials.
+\end{itemize}
+
+  \subsection{Definitions, Acronyms, and Abbreviations}
+  \begin{itemize}
+    \item \textbf{Matching Algorithm:} A computational process that pairs users based on their interests and preferences.
+    \item \textbf{Compatibility Score:} A numerical value representing the similarity between two users based on their responses.
+    \item \textbf{Graph-Based Recommendation:} A system that suggests connections based on shared connections and mutual interests.
+    \item \textbf{Friend Group Formation:} The process of automatically creating groups of compatible users.
+    \item \textbf{Anonymous Matching:} A feature that allows users to interact without revealing their identity initially.
+\end{itemize}
+  
+  \subsection{Overview}
+    The Hobby-Based Social Media App/Website is designed to help college students form meaningful connections by matching individuals based on shared hobbies, interests, and lifestyles. The platform provides an inclusive and judgment-free environment, ensuring that users can interact without social biases. By leveraging institution-exclusive access, anonymous matching, and advanced compatibility algorithms, the app fosters organic friendships and dynamic group formations. The system prioritizes user preferences through a structured scoring model, enabling seamless interaction and engagement. Additionally, features such as chat functionalities, graph-based recommendations, and automated friend group formation enhance the overall user experience, making social networking more intuitive and enjoyable.
+\section{Overall Description}
+
+\subsection{Product Perspective}
+The Hobby-Based Social Media App/Website is designed to help college students form meaningful connections by matching individuals based on shared hobbies, interests, and lifestyles. The platform provides an inclusive and judgment-free environment, ensuring that users can interact without social biases. The system is intended to function as a standalone platform, requiring institutional verification for access.
+
+\subsection{Product Functions}
+\begin{itemize}
+    \item Institution-exclusive access requiring valid ID verification.
+    \item Anonymous matching to prevent biases and encourage genuine connections.
+    \item Customizable preference-based matching system.
+    \item Automated friend group formation based on shared interests.
+    \item Graph-based recommendations for expanding user networks.
+    \item Secure chat functionalities with anonymity options.
+    \item Dynamic question-based preference system.
+\end{itemize}
+
+\subsection{User Characteristics}
+\begin{itemize}
+    \item Users are college students looking to connect with peers.
+    \item Basic familiarity with social media platforms is expected.
+    \item No technical expertise is required to use the system.
+\end{itemize}
+
+\subsection{Principal Actors}
+\begin{itemize}
+    \item \textbf{User:} A student who creates a profile and interacts with other users.
+    \item \textbf{System:} The platform that manages user data, matching, and interactions.
+\end{itemize}
+
+\subsection{General Constraints}
+\begin{itemize}
+    \item Users must have a valid institution ID to register and log in.
+    \item The platform must ensure data privacy and security.
+    \item A stable internet connection is required for full functionality.
+\end{itemize}
+
+\subsection{Assumptions and Dependencies}
+\begin{itemize}
+    \item The system assumes that institutional email verification is sufficient for authentication.
+    \item The effectiveness of the matching algorithm depends on the accuracy of user-provided preferences.
+    \item Internet availability is necessary for real-time updates and communication.
+\end{itemize}
+
+\section{Specific Requirements}
+  \subsection{Functional Requirements}
+    \subsubsection{Use Case: Installation}
+    Write the use cases here..
+  \subsection{Performance Requirements}
+  \subsection{Design Constraints}
+  \subsection{External Interface Requirements}
+
+\section{Future Extensions}
+
+
+\end{document}
+
