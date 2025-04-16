@@ -1,0 +1,125 @@
++
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_login TIMESTAMP,	//will have to update everytime user logs in...
+    //is_active BOOLEAN DEFAULT TRUE we are not doing that shitt
+);
+NOTES FOR TABLES "users":
+	1.NO "is_active shittt"
+	2. last_login timestamp // //will have to update everytime user logs in...(mostly trigger)
+	3. The pair(user_id, email) should be unique, that is user_id "auto-increments" while we make sure that email is unique in the table(mostly trigger)
+	
+	
+CREATE TABLE user_profiles (
+    //profile_id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(user_id) UNIQUE,
+    display_name VARCHAR(100),
+    bio TEXT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+NOTES FOR TABLE "user_profiles":
+	1."display_name" and "bio" can be changed many times so it will be a procedure
+	2. "updated at" will be a trigger such that whenever we change "display_name" or "bio" it will be updated..
+	3. aint using the "profile_id" shhhitttt
+	
+	
+	
+CREATE TABLE user_preferences_rating (
+    //preference_id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(user_id) UNIQUE,
+    hobbies TEXT[], -- Array of hobbies/interests
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+NOTES FOR "user_preferences":
+	1.No need for "preference_id" 
+	2.we will be adding a columns with hobby names which will contain user_rating for that particular hobby and all the hobbies that app will support.
+	3. in case of updating hobbies "hobbies" will require a procedure while "updated_at" will use a trigger
+
+CREATE TABLE friendships (
+    friendship_id SERIAL PRIMARY KEY,(user_id1@user_id2)
+    user1_id(sender ID) INTEGER REFERENCES users(user_id),
+    user2_id(receiver ID) INTEGER REFERENCES users(user_id),
+    status VARCHAR(20) CHECK (status IN ('pending', 'accepted', 'rejected', 'blocked')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user1_id, user2_id)
+);
+
+NOTES FOR "friendships" tables:
+	1. Divide this table into 2 tables , first one will not contain "status" and second one will only contain "friendship-id" and status
+	2. important condition if user_id1@user_id2 exists the reverse should not exist
+	
+	
+CREATE TABLE identity_reveals (
+    reveal_id SERIAL PRIMARY KEY,
+    requester_id INTEGER REFERENCES users(user_id),
+    recipient_id INTEGER REFERENCES users(user_id),
+    status VARCHAR(20) CHECK (status IN ('requested', 'accepted', 'rejected', 'revealed')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+NOTES FOR "identity_reveals" tables:
+	1. Divide this table into 2 tables , first one will not contain "status" and second one will only contain "friendship-id" and status
+	2. important condition if user_id1@user_id2 exists the reverse should not exist
+	
+
+CREATE TABLE blocked_users (
+    block_id SERIAL PRIMARY KEY,
+    blocker_id INTEGER REFERENCES users(user_id),
+    blocked_id INTEGER REFERENCES users(user_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(blocker_id, blocked_id)
+);
+
+CREATE TABLE groups (
+    group_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE group_members (
+    membership_id SERIAL PRIMARY KEY,
+    group_id INTEGER REFERENCES groups(group_id),
+    user_id INTEGER REFERENCES users(user_id),
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(group_id, user_id)
+);
+
+CREATE TABLE group_invitations (
+    invitation_id SERIAL PRIMARY KEY,
+    group_id INTEGER REFERENCES groups(group_id),
+    invitee_id INTEGER REFERENCES users(user_id),
+    status VARCHAR(20) CHECK (status IN ('pending', 'accepted', 'rejected')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE messages (
+    message_id SERIAL PRIMARY KEY,
+    sender_id INTEGER REFERENCES users(user_id),
+    recipient_type VARCHAR(10) CHECK (recipient_type IN ('user', 'group')),
+    recipient_id INTEGER, -- Could be user_id or group_id
+    content TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE user_recommendations (
+    recommendation_id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(user_id),
+    recommended_id INTEGER, -- Could be user_id or group_id
+    recommendation_type VARCHAR(20) CHECK (recommendation_type IN ('user', 'group')),
+    score DECIMAL(5,4),
+    model_id INTEGER REFERENCES recommendation_models(model_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_viewed BOOLEAN DEFAULT FALSE
+);
+
