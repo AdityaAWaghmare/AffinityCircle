@@ -137,8 +137,8 @@ END$$
 -- insert friend recommendations into friendship_request table
 CREATE PROCEDURE RS_SendFriendRecommendation(IN input_sender_id INTEGER , IN input_receiver_id INTEGER , IN input_similarity_score FLOAT)
 BEGIN 
-    INSERT INTO friendship_request (sender_id, receiver_id, similarity_score, recommendation_status, status , created_at)
-    VALUES (input_sender_id, input_receiver_id, input_similarity_score, 0, 0, CURRENT_TIMESTAMP);
+    INSERT INTO friendship_request (sender_id, receiver_id, similarity_score, recommendation_status, status )
+    VALUES (input_sender_id, input_receiver_id, input_similarity_score, 0, 0);
 END$$
 
 -- insert group recommendations into group_recommendation table
