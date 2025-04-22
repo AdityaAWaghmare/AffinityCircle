@@ -134,11 +134,11 @@ BEGIN
     );
 END$$
 
--- get friend recommendations and insert them into friendship_request table
-CREATE PROCEDURE RS_FriendRecommendations(IN input_user_to INTEGER , IN input_user_who INTEGER , IN input_similarity_score FLOAT)
+-- insert friend recommendations into friendship_request table
+CREATE PROCEDURE RS_SendFriendRecommendation(IN sender_id INTEGER , IN receiver_id INTEGER , IN similarity_score FLOAT)
 BEGIN 
     INSERT INTO friendship_request (sender_id, receiver_id, similarity_score, recommendation_status, status , created_at)
-    VALUES (input_user_who, input_user_to, input_similarity_score, 0, 0, CURRENT_TIMESTAMP);
+    VALUES (sender_id, receiver_id, similarity_score, 0, 0, CURRENT_TIMESTAMP);
 END$$
 
 DELIMITER ;

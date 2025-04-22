@@ -21,6 +21,7 @@ except (DatabaseError, OperationalError) as e:
     print("Error initializing connection pool:", e)
     raise SystemExit("Failed to initialize database connection pool.")
 
+
 def get_never_recommended_users_from_db(user_id):
     '''
     Fetch users from the database
