@@ -9,10 +9,11 @@ def create_connection_pool():
         connection_pool = pool.SimpleConnectionPool(
             minconn=int(os.getenv("DB_MIN_CONN", 1)),
             maxconn=int(os.getenv("DB_MAX_CONN", 10)),
-            host=os.getenv("DB_HOST"),
             database=os.getenv("DB_NAME"),
             user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD")
+            password=os.getenv("DB_PASSWORD"),
+            host=os.getenv("DB_HOST"),
+            port=int(os.getenv("DB_PORT"))
         )
         if connection_pool:
             print("Connection pool initialized successfully.")
