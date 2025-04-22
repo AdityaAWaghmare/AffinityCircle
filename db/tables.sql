@@ -142,7 +142,7 @@ BEGIN
 END$$
 
 -- insert group recommendations into group_recommendation table
-CREATE PROCEDURE RS_GroupRecommendation(IN input_group_id INTEGER , IN input_user_id INTEGER , IN input_similarity_score FLOAT)
+CREATE PROCEDURE RS_SendGroupRecommendation(IN input_group_id INTEGER , IN input_user_id INTEGER , IN input_similarity_score FLOAT)
 BEGIN 
     INSERT INTO group_recommendation (group_id, user_id, similarity_score, status )
     VALUES (input_group_id, input_user_id, input_similarity_score, 0);
