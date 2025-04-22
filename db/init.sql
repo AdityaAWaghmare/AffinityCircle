@@ -148,4 +148,11 @@ BEGIN
     VALUES (input_group_id, input_user_id, input_similarity_score, 0);
 END$$
 
+-- insert new group into groups table
+CREATE PROCEDURE RS_CreateGroup(IN input_group_name VARCHAR(255), IN input_hobby1_rating FLOAT, IN input_hobby2_rating FLOAT, IN input_hobby3_rating FLOAT, IN input_hobby4_rating FLOAT, IN input_hobby5_rating FLOAT)
+BEGIN 
+    INSERT INTO groups (group_name, hobby1_rating, hobby2_rating, hobby3_rating, hobby4_rating, hobby5_rating)
+    VALUES (input_group_name, input_hobby1_rating, input_hobby2_rating, input_hobby3_rating, input_hobby4_rating, input_hobby5_rating);
+END$$
+
 DELIMITER ;

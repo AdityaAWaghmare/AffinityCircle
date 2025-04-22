@@ -1,7 +1,16 @@
+# Imports
+from db_connection import create_connection_pool
 from flask import Flask, request, jsonify
-
+from dotenv import load_dotenv
 import recommend
 
+# loading environment variables
+load_dotenv()
+
+# Initialize the connection pool
+connection_pool = create_connection_pool()
+
+# Initialize Flask app
 app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
@@ -14,9 +23,12 @@ def recommend_users():
     user = data.get('user')
     if not user:
         return jsonify({'error': 'User is required'}), 400
-    # Simulate a recommendation process
-    recommended_users = recommend.recommend_friends(user)
-    return jsonify({'recommended_users': recommended_users}), 200
+    success = recommend.recommend_friends(connection_pool, user)
+    if success == 204:
+        return jsonify({'message': 'No content to recommend'}), 204
+    elif success == 500:
+        return jsonify({'error': 'Error in recommendation process'}), 500
+    return jsonify({'message': 'Recommendation process completed successfully'}), 200
 
 @app.route('/recommend_groups', methods=['POST'])
 def recommend_groups():
@@ -24,9 +36,12 @@ def recommend_groups():
     user = data.get('user')
     if not user:
         return jsonify({'error': 'User is required'}), 400
-    # Simulate a recommendation process
-    recommended_groups = recommend.recommend_groups(user)
-    return jsonify({'recommended_groups': recommended_groups}), 200
+    success = recommend.recommend_groups(connection_pool, user)
+    if success == 204:
+        return jsonify({'message': 'No content to recommend'}), 204
+    elif success == 500:
+        return jsonify({'error': 'Error in recommendation process'}), 500
+    return jsonify({'message': 'Recommendation process completed successfully'}), 200
 
 @app.route('/create_group', methods=['POST'])
 def create_group():
@@ -34,7 +49,11 @@ def create_group():
     group_name = data.get('group_name')
     if not group_name:
         return jsonify({'error': 'Group name is required'}), 400
-    # Simulate group creation
-    
+    success = recommend.create_new_group(connection_pool)
+    if success == 500:
+        return jsonify({'error': 'Error in creating group'}), 500
+    return jsonify({'message': 'Group created successfully'}), 200
+
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,28 +1,6 @@
-from psycopg2 import pool, DatabaseError, OperationalError
-from dotenv import load_dotenv
-import os
+from psycopg2 import DatabaseError, OperationalError
 
-# Load environment variables from .env file
-load_dotenv()
-
-# Initialize the connection pool
-try:
-    connection_pool = pool.SimpleConnectionPool(
-        minconn=int(os.getenv("DB_MIN_CONN", 1)),
-        maxconn=int(os.getenv("DB_MAX_CONN", 10)),
-        host=os.getenv("DB_HOST"),
-        database=os.getenv("DB_NAME"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD")
-    )
-    if connection_pool:
-        print("Connection pool initialized successfully.")
-except (DatabaseError, OperationalError) as e:
-    print("Error initializing connection pool:", e)
-    raise SystemExit("Failed to initialize database connection pool.")
-
-
-def get_never_recommended_users_from_db(user_id):
+def get_never_recommended_users_from_db(connection_pool, user_id):
     '''
     Fetch users from the database
     '''
@@ -43,7 +21,7 @@ def get_never_recommended_users_from_db(user_id):
             connection_pool.putconn(conn)
 
 
-def get_never_recommended_groups_from_db(user_id):
+def get_never_recommended_groups_from_db(connection_pool, user_id):
     '''
     Fetch groups from the database
     '''
@@ -64,7 +42,7 @@ def get_never_recommended_groups_from_db(user_id):
             connection_pool.putconn(conn)
 
 
-def get_all_users_from_db():
+def get_all_users_from_db(connection_pool):
     '''
     Fetch all users from the database
     '''
@@ -83,7 +61,7 @@ def get_all_users_from_db():
             connection_pool.putconn(conn)
 
 
-def get_all_groups_from_db():
+def get_all_groups_from_db(connection_pool):
     '''
     Fetch all groups from the database
     '''

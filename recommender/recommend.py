@@ -1,18 +1,22 @@
-import read_db
-import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+from scipy.spatial.distance import cdist
+from sklearn.cluster import KMeans
+import numpy as np
+import write_db
+import read_db
+import os
 
 
-def recommend_friends(user_id):
+def recommend_friends(connection_pool, user_id):
     '''
     Input: user
-    Output: list of recommended friends
+    Output: status code indicating success or failure
     '''
 
-    current_user_data, other_users_data = read_db.get_never_recommended_users_from_db(user_id)
+    current_user_data, other_users_data = read_db.get_never_recommended_users_from_db(connection_pool, user_id)
     if not current_user_data or not other_users_data:
-        return []
-    
+        return 204  # No content to recommend
+
     current_user_array = np.array(current_user_data)
     users_data_array = np.array(other_users_data)
 
@@ -25,19 +29,26 @@ def recommend_friends(user_id):
 
     # Extract the user IDs of the top N similar users
     recommended_users = users_data_array[top_indices, 0].flatten().tolist()
+    similarity_scores = similarities[0][top_indices].tolist()
 
-    return recommended_users
+    # Zip recommended users with their similarity scores
+    recommended_id_similarity_scores = list(zip(recommended_users, similarity_scores))
+
+    # Send recommendations to the database
+    success = write_db.send_friend_recommendations_to_db(connection_pool, user_id, recommended_id_similarity_scores)
+    
+    return 200 if success else 500
 
 
-def recommend_groups(user_id):
+def recommend_groups(connection_pool, user_id):
     '''
     Input: user
-    Output: list of recommended groups
+    Output: status code indicating success or failure
     '''
 
-    current_user_data, group_data = read_db.get_never_recommended_groups_from_db(user_id)
+    current_user_data, group_data = read_db.get_never_recommended_groups_from_db(connection_pool, user_id)
     if not current_user_data or not group_data:
-        return []
+        return 204  # No content to recommend
 
     current_user_array = np.array(current_user_data)
     group_data_array = np.array(group_data)
@@ -51,22 +62,49 @@ def recommend_groups(user_id):
 
     # Extract the group IDs of the top N similar groups
     recommended_groups = group_data_array[top_indices, 0].flatten().tolist()
+    similarity_scores = similarities[0][top_indices].tolist()
 
-    return recommended_groups
+    # Zip recommended groups with their similarity scores
+    recommended_id_similarity_scores = list(zip(recommended_groups, similarity_scores))
+
+    # Send recommendations to the database
+    success = write_db.send_group_recommendations_to_db(connection_pool, user_id, recommended_id_similarity_scores)
+
+    return 200 if success else 500
 
 
-def get_list_of_new_groups(max_groups, new):
+def create_new_group(connection_pool, group_name):
     '''
     Input: None
     Output: list of new groups to be created
     '''
 
-    users_data = read_db.get_all_users_from_db()
-    groups_data = read_db.get_all_groups_from_db()
+    users_data = read_db.get_all_users_from_db(connection_pool)
+    groups_data = read_db.get_all_groups_from_db(connection_pool)
     if not users_data or not groups_data:
         return []
 
     users_data_array = np.array(users_data)
     groups_data_array = np.array(groups_data)
 
+    max_groups = os.getenv("MAX_GROUPS", 100)  # Maximum number of groups to create
     
+    # Perform k-means clustering on users_data
+    kmeans = KMeans(n_clusters=max_groups, random_state=42)
+    kmeans.fit(users_data_array[:, 1:])  # Exclude the user_id column for clustering
+
+    # Get the cluster centers
+    cluster_centers = kmeans.cluster_centers_
+
+    # Compute distances between cluster centers and existing groups
+    distances = cdist(cluster_centers, groups_data_array[:, 1:], metric='cosine')
+
+    # Find the cluster farthest from all existing groups
+    farthest_cluster_index = np.argmax(np.min(distances, axis=1))
+    farthest_cluster_center = cluster_centers[farthest_cluster_index]
+
+    # Insert the farthest cluster center as a new group into the database
+    hobby_rating_list = farthest_cluster_center.tolist()
+    success = write_db.insert_new_group(connection_pool, group_name, hobby_rating_list)
+
+    return 200 if success else 500
