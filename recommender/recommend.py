@@ -1,4 +1,7 @@
+#ToDo: Consider spherical k-means
+
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.preprocessing import normalize
 from scipy.spatial.distance import cdist
 from sklearn.cluster import KMeans
 import numpy as np
@@ -86,6 +89,9 @@ def create_new_group(connection_pool, group_name):
 
     users_data_array = np.array(users_data)
     groups_data_array = np.array(groups_data)
+
+    # Normalize user feature vectors (excluding ID column) for closer approximation of cosine through euclidean k means
+    users_data_array[:, 1:] = normalize(users_data_array[:, 1:], norm='l2')
 
     max_groups = os.getenv("MAX_GROUPS", 100)  # Maximum number of groups to create
     
