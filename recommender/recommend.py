@@ -93,10 +93,10 @@ def create_new_group(connection_pool, group_name):
     # Normalize user feature vectors (excluding ID column) for closer approximation of cosine through euclidean k means
     users_data_array[:, 1:] = normalize(users_data_array[:, 1:], norm='l2')
 
-    max_groups = os.getenv("MAX_GROUPS", 100)  # Maximum number of groups to create
+    n_clusters = users_data_array.shape[0] // 10 + 1
     
     # Perform k-means clustering on users_data
-    kmeans = KMeans(n_clusters=max_groups, random_state=42)
+    kmeans = KMeans(n_clusters=n_clusters, random_state=42)
     kmeans.fit(users_data_array[:, 1:])  # Exclude the user_id column for clustering
 
     # Get the cluster centers
