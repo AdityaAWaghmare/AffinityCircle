@@ -151,7 +151,6 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION RS_GetAllGroups()
 RETURNS TABLE (
     group_id INTEGER,
-    group_name VARCHAR,
     hobby1_rating FLOAT,
     hobby2_rating FLOAT,
     hobby3_rating FLOAT,
@@ -160,7 +159,7 @@ RETURNS TABLE (
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT g.group_id, g.group_name, g.hobby1_rating, g.hobby2_rating, g.hobby3_rating, g.hobby4_rating, g.hobby5_rating
+    SELECT g.group_id, g.hobby1_rating, g.hobby2_rating, g.hobby3_rating, g.hobby4_rating, g.hobby5_rating
     FROM groups g;
 END;
 $$ LANGUAGE plpgsql;
@@ -169,7 +168,6 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION RS_NeverRecommendedGroups(input_user_id INTEGER)
 RETURNS TABLE (
     group_id INTEGER,
-    group_name VARCHAR,
     hobby1_rating FLOAT,
     hobby2_rating FLOAT,
     hobby3_rating FLOAT,
