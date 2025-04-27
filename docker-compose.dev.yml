@@ -24,6 +24,11 @@ services:
       - ./db:/docker-entrypoint-initdb.d
     ports:
       - "${DB_PORT}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   recommender:
     build:
@@ -43,6 +48,9 @@ services:
       - MAX_GROUPS_RECOMMENDATIONS=${MAX_GROUPS_RECOMMENDATIONS}
       - DB_MIN_CONN=${DB_MIN_CONN}
       - DB_MAX_CONN=${DB_MAX_CONN}
+    depends_on:
+      db:
+        condition: service_healthy
 
 volumes:
   postgres:
