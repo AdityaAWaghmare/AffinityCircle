@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import Onboarding from './Onboarding';
+import PrioritySelection from './PrioritySelection';
+import HomePage from './HomePage';
 
-function App() {
+const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isFirstTimeUser, setIsFirstTimeUser] = useState(false);
+  const [userPreferences, setUserPreferences] = useState(null);
+  const [currentScreen, setCurrentScreen] = useState('home'); // 'home', 'settings', 'edit'
+
+  const handleLogin = (firstTime) => {
+    setIsLoggedIn(true);
+    setIsFirstTimeUser(firstTime);
+  };
+
+  const handlePreferencesComplete = (preferences) => {
+    setUserPreferences(preferences);
+    setIsFirstTimeUser(false);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.HEHHE
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {!isLoggedIn ? (
+        <Onboarding onLogin={handleLogin} />
+      ) : isFirstTimeUser ? (
+        <PrioritySelection onComplete={handlePreferencesComplete} />
+      ) : (
+        <HomePage
+          userPreferences={userPreferences}
+        />
+      )}
     </div>
   );
-}
+};
 
 export default App;
