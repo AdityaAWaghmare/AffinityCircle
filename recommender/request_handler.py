@@ -23,12 +23,16 @@ def recommend_users():
     user = data.get('user')
     if not user:
         return jsonify({'error': 'User is required'}), 400
-    success = recommend.recommend_friends(connection_pool, user)
-    if success == 204:
-        return jsonify({'message': 'No content to recommend'}), 204
-    elif success == 500:
-        return jsonify({'error': 'Error in recommendation process'}), 500
-    return jsonify({'message': 'Recommendation process completed successfully'}), 200
+    try:
+        user = int(user)
+        success = recommend.recommend_friends(connection_pool, user)
+        if success == 204:
+            return jsonify({'message': 'No content to recommend'}), 204
+        elif success == 500:
+            return jsonify({'error': 'Error in recommendation process'}), 500
+        return jsonify({'message': 'Recommendation process completed successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/recommend_groups', methods=['POST'])
 def recommend_groups():
@@ -36,12 +40,16 @@ def recommend_groups():
     user = data.get('user')
     if not user:
         return jsonify({'error': 'User is required'}), 400
-    success = recommend.recommend_groups(connection_pool, user)
-    if success == 204:
-        return jsonify({'message': 'No content to recommend'}), 204
-    elif success == 500:
-        return jsonify({'error': 'Error in recommendation process'}), 500
-    return jsonify({'message': 'Recommendation process completed successfully'}), 200
+    try:
+        user = int(user)
+        success = recommend.recommend_groups(connection_pool, user)
+        if success == 204:
+            return jsonify({'message': 'No content to recommend'}), 204
+        elif success == 500:
+            return jsonify({'error': 'Error in recommendation process'}), 500
+        return jsonify({'message': 'Recommendation process completed successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/create_group', methods=['POST'])
 def create_group():
@@ -49,10 +57,14 @@ def create_group():
     group_name = data.get('group_name')
     if not group_name:
         return jsonify({'error': 'Group name is required'}), 400
-    success = recommend.create_new_group(connection_pool, group_name)
-    if success == 500:
-        return jsonify({'error': 'Error in creating group'}), 500
-    return jsonify({'message': 'Group created successfully'}), 200
+    try:
+        user = int(user)
+        success = recommend.create_new_group(connection_pool, group_name)
+        if success == 500:
+            return jsonify({'error': 'Error in creating group'}), 500
+        return jsonify({'message': 'Group created successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':
