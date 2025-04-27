@@ -176,7 +176,7 @@ RETURNS TABLE (
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT g.group_id, g.group_name, g.hobby1_rating, g.hobby2_rating, g.hobby3_rating, g.hobby4_rating, g.hobby5_rating
+    SELECT g.group_id, g.hobby1_rating, g.hobby2_rating, g.hobby3_rating, g.hobby4_rating, g.hobby5_rating
     FROM groups g
     WHERE g.group_id NOT IN (
         SELECT gr.group_id
