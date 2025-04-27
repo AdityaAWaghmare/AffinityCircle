@@ -215,7 +215,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
------- EXAMPLE 
+
+----------------------------------------------- EXAMPLES -------------------------------------------------
 
 INSERT INTO users (email, verified_name, display_name, profile_pic, bio, hobby1_rating, hobby2_rating, hobby3_rating, hobby4_rating, hobby5_rating)
 VALUES
@@ -236,8 +237,3 @@ VALUES
 ('group_D' , 4 , 5 , 6 , 7 , 8),
 ('group_E' , 5 , 6 , 7 , 8 , 9) 
 ;
-
-INSERT INTO friendship_request (sender_id, receiver_id, similarity_score, recommendation_status, status)
-VALUES
-(1, 2, 0.8, 0, 0),
-(1, 3, 0.7, 0, 0);

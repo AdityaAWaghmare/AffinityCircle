@@ -49,7 +49,7 @@ def create_group():
     group_name = data.get('group_name')
     if not group_name:
         return jsonify({'error': 'Group name is required'}), 400
-    success = recommend.create_new_group(connection_pool)
+    success = recommend.create_new_group(connection_pool, group_name)
     if success == 500:
         return jsonify({'error': 'Error in creating group'}), 500
     return jsonify({'message': 'Group created successfully'}), 200
