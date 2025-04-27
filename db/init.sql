@@ -1,3 +1,5 @@
+--------------------------------------- Initializing tables ------------------------------------------
+
 -- Users entity relationships
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY, -- Auto-incrementing unique ID
@@ -84,7 +86,6 @@ CREATE TABLE group_message (
 
 
 
----------------------------------------------------------------------------------------------------
 
 ---------------------------------- Procedures for Recommendations ---------------------------------
 

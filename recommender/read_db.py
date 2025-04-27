@@ -8,9 +8,9 @@ def get_never_recommended_users_from_db(connection_pool, user_id):
     try:
         conn = connection_pool.getconn()
         with conn.cursor() as cursor:
-            cursor.execute(f"CALL RS_NeverRecommendedUsers({user_id})")
+            cursor.execute(f"SELECT * FROM RS_NeverRecommendedUsers({user_id})")
             users_data = cursor.fetchall()
-            cursor.execute(f"CALL RS_GetUser({user_id})")
+            cursor.execute(f"SELECT * FROM RS_GetUser({user_id})")
             current_user_data = cursor.fetchall()
             return current_user_data, users_data
     except (DatabaseError, OperationalError) as e:
@@ -29,9 +29,9 @@ def get_never_recommended_groups_from_db(connection_pool, user_id):
     try:
         conn = connection_pool.getconn()
         with conn.cursor() as cursor:
-            cursor.execute(f"CALL RS_NeverRecommendedGroups({user_id})")
+            cursor.execute(f"SELECT * FROM RS_NeverRecommendedGroups({user_id})")
             group_data = cursor.fetchall()
-            cursor.execute(f"CALL RS_GetUser({user_id})")
+            cursor.execute(f"SELECT * FROM RS_GetUser({user_id})")
             current_user_data = cursor.fetchall()
             return current_user_data, group_data
     except (DatabaseError, OperationalError) as e:
@@ -50,7 +50,7 @@ def get_all_users_from_db(connection_pool):
     try:
         conn = connection_pool.getconn()
         with conn.cursor() as cursor:
-            cursor.execute("CALL RS_GetAllUsers()")
+            cursor.execute("SELECT * FROM RS_GetAllUsers()")
             users_data = cursor.fetchall()
             return users_data
     except (DatabaseError, OperationalError) as e:
@@ -69,7 +69,7 @@ def get_all_groups_from_db(connection_pool):
     try:
         conn = connection_pool.getconn()
         with conn.cursor() as cursor:
-            cursor.execute("CALL RS_GetAllGroups()")
+            cursor.execute("SELECT * FROM RS_GetAllGroups()")
             group_data = cursor.fetchall()
             return group_data
     except (DatabaseError, OperationalError) as e:
