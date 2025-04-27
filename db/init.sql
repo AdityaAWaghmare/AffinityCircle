@@ -214,3 +214,30 @@ BEGIN
     VALUES (input_group_name, input_hobby1_rating, input_hobby2_rating, input_hobby3_rating, input_hobby4_rating, input_hobby5_rating);
 END;
 $$ LANGUAGE plpgsql;
+
+------ EXAMPLE 
+
+INSERT INTO users (email, verified_name, display_name, profile_pic, bio, hobby1_rating, hobby2_rating, hobby3_rating, hobby4_rating, hobby5_rating)
+VALUES
+('a@int.ac.in' , 'ico_A' , 'A' , 1 , 'bio_A' , 4 , 5 , 7 , 3 , 1),
+('b@int.ac.in' , 'ico_B' , 'B' , 2 , 'bio_B' , 3 , 4 , 5 , 2 , 1),
+('c@int.ac.in' , 'ico_C' , 'C' , 3 , 'bio_C' , 2 , 3 , 4 , 1 , 1),
+('d@int.ac.in' , 'ico_D' , 'D' , 4 , 'bio_D' , 10 , 9 , 1 , 10 , 10),
+('e@int.ac.in' , 'ico_E' , 'E' , 5 , 'bio_E' , 1 , 2 , 3 , 4 , 5),
+('f@int.ac.in' , 'ico_F' , 'F' , 6 , 'bio_F' , 10 , 3 , 4 , 5 , 6),
+('g@int.ac.in' , 'ico_G' , 'G' , 7 , 'bio_G' , 10 , 2 , 3 , 4 , 5)
+;
+
+INSERT INTO groups (group_name, hobby1_rating, hobby2_rating, hobby3_rating, hobby4_rating, hobby5_rating)
+VALUES
+('group_A' , 1 , 2 , 3 , 4 , 5),
+('group_B' , 2 , 3 , 4 , 5 , 6),
+('group_C' , 3 , 4 , 5 , 6 , 7),
+('group_D' , 4 , 5 , 6 , 7 , 8),
+('group_E' , 5 , 6 , 7 , 8 , 9) 
+;
+
+INSERT INTO friendship_request (sender_id, receiver_id, similarity_score, recommendation_status, status)
+VALUES
+(1, 2, 0.8, 0, 0),
+(1, 3, 0.7, 0, 0);
