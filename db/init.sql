@@ -70,7 +70,7 @@ CREATE TABLE group_membership (
 -- Messages entity relationships
 CREATE TABLE friendship_message (
     message_id SERIAL PRIMARY KEY, -- Auto-incrementing unique ID
-    coversation_id INTEGER NOT NULL REFERENCES friendship(friendship_id), -- ID of the conversation
+    conversation_id INTEGER NOT NULL REFERENCES friendship(friendship_id), -- ID of the conversation
     sender_id INTEGER NOT NULL REFERENCES users(user_id), -- User who sent the message
     content TEXT NOT NULL, -- Content of the message
     sent_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP -- Timestamp of when the message was sent
@@ -181,9 +181,9 @@ BEGIN
     SELECT g.group_id, g.group_name, g.hobby1_rating, g.hobby2_rating, g.hobby3_rating, g.hobby4_rating, g.hobby5_rating
     FROM groups g
     WHERE g.group_id NOT IN (
-        SELECT group_id
-        FROM group_recommendation
-        WHERE user_id = input_user_id
+        SELECT gr.group_id
+        FROM group_recommendation gr
+        WHERE gr.user_id = input_user_id
     );
 END;
 $$ LANGUAGE plpgsql;
