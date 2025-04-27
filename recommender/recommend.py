@@ -103,7 +103,7 @@ def create_new_group(connection_pool, group_name):
     cluster_centers = kmeans.cluster_centers_
 
     # Compute distances between cluster centers and existing groups
-    distances = cdist(cluster_centers, users_data_array[:, 1:], metric='cosine')
+    distances = cdist(cluster_centers, groups_data_array[:, 1:], metric='cosine')
 
     # Find the cluster farthest from all existing groups
     farthest_cluster_index = np.argmax(np.min(distances, axis=1))
