@@ -85,26 +85,56 @@ CREATE TABLE group_message (
 
 
 ---------------------------------------------------------------------------------------------------
-DELIMITER $$
 
 ---------------------------------- Procedures for Recommendations ---------------------------------
 
 -- get user preferences
-CREATE PROCEDURE RS_GetUser(IN input_user_id INTEGER)
+CREATE OR REPLACE FUNCTION RS_GetUser(input_user_id INTEGER)
+RETURNS TABLE (
+    user_id INTEGER,
+    hobby1_rating INTEGER,
+    hobby2_rating INTEGER,
+    hobby3_rating INTEGER,
+    hobby4_rating INTEGER,
+    hobby5_rating INTEGER
+) AS $$
 BEGIN
-    SELECT u.user_id, u.hobby1_rating, u.hobby2_rating, u.hobby3_rating, u.hobby4_rating, u.hobby5_rating FROM users WHERE user_id = input_user_id;
-END$$
+    RETURN QUERY
+    SELECT u.user_id, u.hobby1_rating, u.hobby2_rating, u.hobby3_rating, u.hobby4_rating, u.hobby5_rating
+    FROM users u
+    WHERE u.user_id = input_user_id;
+END;
+$$ LANGUAGE plpgsql;
 
 -- get list of all users with their preferences
-CREATE PROCEDURE RS_GetAllUsers()
+CREATE OR REPLACE FUNCTION RS_GetAllUsers()
+RETURNS TABLE (
+    user_id INTEGER,
+    hobby1_rating INTEGER,
+    hobby2_rating INTEGER,
+    hobby3_rating INTEGER,
+    hobby4_rating INTEGER,
+    hobby5_rating INTEGER
+) AS $$
 BEGIN
+    RETURN QUERY
     SELECT u.user_id, u.hobby1_rating, u.hobby2_rating, u.hobby3_rating, u.hobby4_rating, u.hobby5_rating
     FROM users u;
-END$$
+END;
+$$ LANGUAGE plpgsql;
 
 -- get list of all users never recommended to a user with their preferences
-CREATE PROCEDURE RS_NeverRecommendedUsers(IN input_user_id INTEGER)
+CREATE OR REPLACE FUNCTION RS_NeverRecommendedUsers(input_user_id INTEGER)
+RETURNS TABLE (
+    user_id INTEGER,
+    hobby1_rating INTEGER,
+    hobby2_rating INTEGER,
+    hobby3_rating INTEGER,
+    hobby4_rating INTEGER,
+    hobby5_rating INTEGER
+) AS $$
 BEGIN
+    RETURN QUERY
     SELECT u.user_id, u.hobby1_rating, u.hobby2_rating, u.hobby3_rating, u.hobby4_rating, u.hobby5_rating
     FROM users u
     WHERE u.user_id != input_user_id
@@ -113,18 +143,40 @@ BEGIN
           FROM friendship_request
           WHERE sender_id = input_user_id
       );
-END$$
+END;
+$$ LANGUAGE plpgsql;
 
 -- get list of all groups with their preferences
-CREATE PROCEDURE RS_GetAllGroups()
+CREATE OR REPLACE FUNCTION RS_GetAllGroups()
+RETURNS TABLE (
+    group_id INTEGER,
+    group_name VARCHAR,
+    hobby1_rating FLOAT,
+    hobby2_rating FLOAT,
+    hobby3_rating FLOAT,
+    hobby4_rating FLOAT,
+    hobby5_rating FLOAT
+) AS $$
 BEGIN
+    RETURN QUERY
     SELECT g.group_id, g.group_name, g.hobby1_rating, g.hobby2_rating, g.hobby3_rating, g.hobby4_rating, g.hobby5_rating
     FROM groups g;
-END$$
+END;
+$$ LANGUAGE plpgsql;
 
 -- get list of all groups never recommended to a user with their preferences
-CREATE PROCEDURE RS_NeverRecommendedGroups(IN input_user_id INTEGER)
+CREATE OR REPLACE FUNCTION RS_NeverRecommendedGroups(input_user_id INTEGER)
+RETURNS TABLE (
+    group_id INTEGER,
+    group_name VARCHAR,
+    hobby1_rating FLOAT,
+    hobby2_rating FLOAT,
+    hobby3_rating FLOAT,
+    hobby4_rating FLOAT,
+    hobby5_rating FLOAT
+) AS $$
 BEGIN
+    RETURN QUERY
     SELECT g.group_id, g.group_name, g.hobby1_rating, g.hobby2_rating, g.hobby3_rating, g.hobby4_rating, g.hobby5_rating
     FROM groups g
     WHERE g.group_id NOT IN (
@@ -132,27 +184,32 @@ BEGIN
         FROM group_recommendation
         WHERE user_id = input_user_id
     );
-END$$
+END;
+$$ LANGUAGE plpgsql;
 
 -- insert friend recommendations into friendship_request table
-CREATE PROCEDURE RS_SendFriendRecommendation(IN input_sender_id INTEGER , IN input_receiver_id INTEGER , IN input_similarity_score FLOAT)
-BEGIN 
-    INSERT INTO friendship_request (sender_id, receiver_id, similarity_score, recommendation_status, status )
+CREATE OR REPLACE FUNCTION RS_SendFriendRecommendation(input_sender_id INTEGER, input_receiver_id INTEGER, input_similarity_score FLOAT)
+RETURNS VOID AS $$
+BEGIN
+    INSERT INTO friendship_request (sender_id, receiver_id, similarity_score, recommendation_status, status)
     VALUES (input_sender_id, input_receiver_id, input_similarity_score, 0, 0);
-END$$
+END;
+$$ LANGUAGE plpgsql;
 
 -- insert group recommendations into group_recommendation table
-CREATE PROCEDURE RS_SendGroupRecommendation(IN input_group_id INTEGER , IN input_user_id INTEGER , IN input_similarity_score FLOAT)
-BEGIN 
-    INSERT INTO group_recommendation (group_id, user_id, similarity_score, status )
+CREATE OR REPLACE FUNCTION RS_SendGroupRecommendation(input_group_id INTEGER, input_user_id INTEGER, input_similarity_score FLOAT)
+RETURNS VOID AS $$
+BEGIN
+    INSERT INTO group_recommendation (group_id, user_id, similarity_score, status)
     VALUES (input_group_id, input_user_id, input_similarity_score, 0);
-END$$
+END;
+$$ LANGUAGE plpgsql;
 
 -- insert new group into groups table
-CREATE PROCEDURE RS_CreateGroup(IN input_group_name VARCHAR(255), IN input_hobby1_rating FLOAT, IN input_hobby2_rating FLOAT, IN input_hobby3_rating FLOAT, IN input_hobby4_rating FLOAT, IN input_hobby5_rating FLOAT)
-BEGIN 
+CREATE OR REPLACE FUNCTION RS_CreateGroup(input_group_name VARCHAR, input_hobby1_rating FLOAT, input_hobby2_rating FLOAT, input_hobby3_rating FLOAT, input_hobby4_rating FLOAT, input_hobby5_rating FLOAT)
+RETURNS VOID AS $$
+BEGIN
     INSERT INTO groups (group_name, hobby1_rating, hobby2_rating, hobby3_rating, hobby4_rating, hobby5_rating)
     VALUES (input_group_name, input_hobby1_rating, input_hobby2_rating, input_hobby3_rating, input_hobby4_rating, input_hobby5_rating);
-END$$
-
-DELIMITER ;
+END;
+$$ LANGUAGE plpgsql;
