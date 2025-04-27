@@ -8,9 +8,9 @@ def get_never_recommended_users_from_db(connection_pool, user_id):
     try:
         conn = connection_pool.getconn()
         with conn.cursor() as cursor:
-            cursor.execute(f"SELECT * FROM RS_NeverRecommendedUsers({user_id})")
+            cursor.execute("SELECT * FROM RS_NeverRecommendedUsers(%s)", (user_id,))
             users_data = cursor.fetchall()
-            cursor.execute(f"SELECT * FROM RS_GetUser({user_id})")
+            cursor.execute("SELECT * FROM RS_GetUser(%s)", (user_id,))
             current_user_data = cursor.fetchall()
             return current_user_data, users_data
     except (DatabaseError, OperationalError) as e:
@@ -29,9 +29,9 @@ def get_never_recommended_groups_from_db(connection_pool, user_id):
     try:
         conn = connection_pool.getconn()
         with conn.cursor() as cursor:
-            cursor.execute(f"SELECT * FROM RS_NeverRecommendedGroups({user_id})")
+            cursor.execute("SELECT * FROM RS_NeverRecommendedGroups(%s)", (user_id,))
             group_data = cursor.fetchall()
-            cursor.execute(f"SELECT * FROM RS_GetUser({user_id})")
+            cursor.execute("SELECT * FROM RS_GetUser(%s)", (user_id,))
             current_user_data = cursor.fetchall()
             return current_user_data, group_data
     except (DatabaseError, OperationalError) as e:
