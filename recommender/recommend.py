@@ -22,15 +22,15 @@ def recommend_friends(connection_pool, user_id):
     users_data_array = np.array(other_users_data)
 
     # Compute cosine similarity between the current user and all other users
-    similarities = cosine_similarity(users_data_array[:, 1:], current_user_array[:, 1:])
+    similarities = cosine_similarity(current_user_array[:, 1:], users_data_array[:, 1:])[0]
 
     # Get the top N users based on similarity scores
     N = int(os.getenv("MAX_FRIENDS_RECOMMENDATIONS", 5))  # You can adjust this value as needed
-    top_indices = np.argsort(similarities[0])[-N:][::-1]  # Get the indices of the top N similar users
+    top_indices = np.argsort(similarities)[-N:][::-1]  # Get the indices of the top N similar users
 
     # Extract the user IDs of the top N similar users
     recommended_users = users_data_array[top_indices, 0].flatten().tolist()
-    similarity_scores = similarities[0][top_indices].tolist()
+    similarity_scores = similarities[top_indices].tolist()
 
     # Zip recommended users with their similarity scores
     recommended_id_similarity_scores = list(zip(recommended_users, similarity_scores))
@@ -55,15 +55,15 @@ def recommend_groups(connection_pool, user_id):
     group_data_array = np.array(group_data)
 
     # Compute cosine similarity between the current user and all other groups
-    similarities = cosine_similarity(group_data_array[:, 1:], current_user_array[:, 1:])
+    similarities = cosine_similarity(current_user_array[:, 1:], group_data_array[:, 1:])[0]
 
     # Get the top N groups based on similarity scores
     N = int(os.getenv("MAX_GROUPS_RECOMMENDATIONS", 5))  # You can adjust this value as needed
-    top_indices = np.argsort(similarities[0])[-N:][::-1]  # Get the indices of the top N similar groups
+    top_indices = np.argsort(similarities)[-N:][::-1]  # Get the indices of the top N similar groups
 
     # Extract the group IDs of the top N similar groups
     recommended_groups = group_data_array[top_indices, 0].flatten().tolist()
-    similarity_scores = similarities[0][top_indices].tolist()
+    similarity_scores = similarities[top_indices].tolist()
 
     # Zip recommended groups with their similarity scores
     recommended_id_similarity_scores = list(zip(recommended_groups, similarity_scores))
