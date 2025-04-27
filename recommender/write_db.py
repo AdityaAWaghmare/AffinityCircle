@@ -24,7 +24,7 @@ def send_friend_recommendations_to_db(connection_pool, user_id, recommended_id_s
         if conn:
             connection_pool.putconn(conn)
 
-def send_group_recommendations_to_db(connection_pool, group_id, recommended_id_similarity_scores):
+def send_group_recommendations_to_db(connection_pool, user_id, recommended_group_id_similarity_scores):
     '''
     Write group recommendations to the database
     '''
@@ -32,8 +32,11 @@ def send_group_recommendations_to_db(connection_pool, group_id, recommended_id_s
     try:
         conn = connection_pool.getconn() # Get a connection from the pool
         with conn.cursor() as cursor:
-            for recommended_id, similarity_score in recommended_id_similarity_scores:
-                cursor.execute("SELECT RS_SendGroupRecommendation(%s, %s, %s)", (group_id, recommended_id, similarity_score))
+            for recommended_group_id, similarity_score in recommended_group_id_similarity_scores:
+                cursor.execute(
+                    "SELECT RS_SendGroupRecommendation(%s, %s, %s)", 
+                    (recommended_group_id, user_id, similarity_score)
+                )
             conn.commit()
         return True
     except (DatabaseError, OperationalError) as e:

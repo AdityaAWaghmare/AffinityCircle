@@ -28,8 +28,8 @@ def recommend_friends(connection_pool, user_id):
     N = int(os.getenv("MAX_FRIENDS_RECOMMENDATIONS", 5))  # You can adjust this value as needed
     top_indices = np.argsort(similarities)[-N:][::-1]  # Get the indices of the top N similar users
 
-    # Extract the user IDs of the top N similar users
-    recommended_users = users_data_array[top_indices, 0].flatten().tolist()
+    # Extract the user IDs of the top N similar users and ensure they are integers
+    recommended_users = users_data_array[top_indices, 0].astype(int).flatten().tolist()
     similarity_scores = similarities[top_indices].tolist()
 
     # Zip recommended users with their similarity scores
@@ -58,18 +58,18 @@ def recommend_groups(connection_pool, user_id):
     similarities = cosine_similarity(current_user_array[:, 1:], group_data_array[:, 1:])[0]
 
     # Get the top N groups based on similarity scores
-    N = int(os.getenv("MAX_GROUPS_RECOMMENDATIONS", 5))  # You can adjust this value as needed
+    N = int(os.getenv("MAX_GROUPS_RECOMMENDATIONS", 1))  # You can adjust this value as needed
     top_indices = np.argsort(similarities)[-N:][::-1]  # Get the indices of the top N similar groups
 
     # Extract the group IDs of the top N similar groups
-    recommended_groups = group_data_array[top_indices, 0].flatten().tolist()
+    recommended_groups = group_data_array[top_indices, 0].astype(int).flatten().tolist()
     similarity_scores = similarities[top_indices].tolist()
 
     # Zip recommended groups with their similarity scores
-    recommended_id_similarity_scores = list(zip(recommended_groups, similarity_scores))
+    recommended_group_id_similarity_scores = list(zip(recommended_groups, similarity_scores))
 
     # Send recommendations to the database
-    success = write_db.send_group_recommendations_to_db(connection_pool, user_id, recommended_id_similarity_scores)
+    success = write_db.send_group_recommendations_to_db(connection_pool, user_id, recommended_group_id_similarity_scores)
 
     return 200 if success else 500
 
