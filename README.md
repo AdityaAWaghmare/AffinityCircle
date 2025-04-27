@@ -8,3 +8,7 @@ Software Engineering project
 * Gadekar S.B.
 * Gaurav Choudekar
 * Siddhant Godbole
+
+Useful Commands:
+
+- psql -U acteam -d ac_db, SELECT * FROM GROUPS;

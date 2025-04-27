@@ -1,5 +1,3 @@
-#ToDo: Consider spherical k-means
-
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import normalize
 from scipy.spatial.distance import cdist
@@ -87,8 +85,8 @@ def create_new_group(connection_pool, group_name):
     if not users_data or not groups_data:
         return []
 
-    users_data_array = np.array(users_data)
-    groups_data_array = np.array(groups_data)
+    users_data_array = np.array(users_data, dtype=np.float64)
+    groups_data_array = np.array(groups_data, dtype=np.float64)
 
     # Normalize user feature vectors (excluding ID column) for closer approximation of cosine through euclidean k means
     users_data_array[:, 1:] = normalize(users_data_array[:, 1:], norm='l2')
@@ -102,11 +100,11 @@ def create_new_group(connection_pool, group_name):
     # Get the cluster centers
     cluster_centers = kmeans.cluster_centers_
 
-    # Compute distances between cluster centers and existing groups
-    distances = cdist(cluster_centers, groups_data_array[:, 1:], metric='cosine')
+    # Compute similarities between cluster centers and existing groups
+    similarities = cosine_similarity(cluster_centers, groups_data_array[:, 1:])
 
-    # Find the cluster farthest from all existing groups
-    farthest_cluster_index = np.argmax(np.min(distances, axis=1))
+    # Find the cluster most de-similar from all existing groups
+    farthest_cluster_index = np.argmin(np.max(similarities, axis=1))
     farthest_cluster_center = cluster_centers[farthest_cluster_index]
 
     # Insert the farthest cluster center as a new group into the database
