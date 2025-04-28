@@ -1,0 +1,944 @@
+\documentclass[12pt,a4paper]{article}
+% \usepackage[a4paper, margin = 1in]{geometry}
+\usepackage[english]{babel}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage[colorlinks=true, linkcolor=blue]{hyperref}
+\usepackage{titlesec}
+\usepackage{helvet}
+\usepackage{ragged2e}
+\usepackage{graphicx}
+
+% \documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+% \usepackage{xcolor}
+
+% Define colors for syntax highlighting
+\definecolor{codebg}{rgb}{0.95,0.95,0.95}
+\definecolor{keywordcolor}{rgb}{0.0,0.0,0.8}
+\definecolor{commentcolor}{rgb}{0.0,0.5,0.0}
+\definecolor{stringcolor}{rgb}{0.6,0.1,0.1}
+
+% Configure the listings package
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{keywordcolor}\bfseries,
+    commentstyle=\color{commentcolor}\itshape,
+    stringstyle=\color{stringcolor},
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=4,
+    frame=single,
+    captionpos=b
+}
+
+\renewcommand{\rmdefault}{phv} 
+\pagenumbering{gobble} % Suppresses page numbering before this point
+\titleformat{\subsubsection}
+  {\normalfont\bfseries\itshape} % Font style (e.g., bold, italic, large)
+  {\thesubsubsection}{1em}{} % Numbering and spacing
+\definecolor{myblue}{rgb}{0.0, 0.0, 1.0}     % Pure blue
+\definecolor{myred}{rgb}{1.0, 0.0, 0.0}      % Pure red
+\definecolor{mygreen}{rgb}{0.0, 0.5, 0.0}    % Dark greens
+\definecolor{myorange}{rgb}{0.4, 0.3, 0.0}   % orange
+
+\definecolor{darkblue}{RGB}{0,60,130}
+\definecolor{dcyan}{RGB}{0,100,150}
+\definecolor{bcyan}{RGB}{0,130,200}
+\hypersetup{
+    linkcolor=darkblue % Color for section links
+}
+\usepackage{tocloft}
+% Customize the table of contents
+\renewcommand{\cftsecfont}{\color{darkblue}\bfseries} % Sections color
+\renewcommand{\cftsubsecfont}{\color{dcyan}} % Subsections color
+\renewcommand{\cftsecpagefont}{\color{dcyan}} % Section page numbers color
+\renewcommand{\cftsubsecpagefont}{\color{bcyan}} % Subsection page numbers color
+
+\justifying
+\usepackage[none]{hyphenat}
+\titleformat{\section}[block]
+  {\color{darkblue}\normalfont\Large\bfseries} % Section title color
+  {\thesection}{1em}{}
+
+\titleformat{\subsection}[block]
+  {\color{dcyan}\normalfont\large\bfseries} % Subsection title color
+  {\thesubsection}{1em}{}
+  
+\renewcommand{\thesection}{\arabic{section}.}
+\renewcommand{\thesubsection}{\thesection\arabic{subsection}}
+
+\title{\textcolor{darkblue}{Software Design Document for\textbf { Hobby-Based Social Media} \\ App/Website \\ (G8)}}
+
+\author{
+\vspace{5em}\\
+\Large\textbf{\textcolor{dcyan}{Contributors } }\\
+\vspace{-0em}\\
+{\renewcommand{\arraystretch}{1.5} % Increases row spacing
+\begin{tabular}{l@{\hskip 1.5cm}l}
+   \textbf{\textcolor{bcyan}{Name}} & \textbf{\textcolor{bcyan}{Roll Number}} \\
+    Aditya A. Waghmare & CS22BTECH11061 \\
+    Siddhant S. Godbole & CS22BTECH11054\\
+    Gadekar S.B & CS22BTECH11022\\
+    Gaurav Choudekar & CS22BTECH11015
+\end{tabular}
+}
+}
+\date{}
+
+\begin{document}
+
+\pagenumbering{arabic}  % Start page numbering in Arabic numerals
+\setcounter{page}{1}
+
+\maketitle
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section{Software Architecture}
+
+\subsection{Overview}
+
+\subsubsection{System Overview}
+The Hobby-Based Social Media platform is a web application designed to help college students connect with each other based on shared hobbies and interests. 
+The platform emphasizes anonymity and privacy, allowing users to interact without revealing their identities until they choose to do so. 
+The system uses graph-based recommendations and an interactive questionnaire to match users with similar interests, fostering meaningful connections and group formations. 
+The platform is institution-exclusive, ensuring that only verified students can join, thereby creating a safe and trusted environment for social interactions.
+
+\subsubsection{System Context}
+The system context is defined clearly in the SRS. Basically, the user is the main sink of the information. The user is also the main source of information/data.
+
+\subsubsection{Stakeholders}
+The main stakeholders for the system are the individual users who might use the system and the system designer/builder who will build the Hobby Based Social Media platform.
+The main concerns of the two stakeholders are:
+\begin{itemize}
+    \item \textbf{Users:} The users are concerned with the privacy and security of their data. They are also concerned with the ease of use of the platform and the quality of the recommendations provided by the system.
+    \item \textbf{System Designer/Builder:} The system designer/builder is concerned with the scalability and maintainability of the system. They are also concerned with the performance and reliability of the system.
+\end{itemize}
+
+\subsubsection{Scope of this Document}
+This document describes the proposed architecture for the Hobby-Based Social Media platform. For architecture, we consider only the component and connector view.
+
+\subsubsection{Definitions and Acronyms}
+As given in the SRS.
+
+\subsection{Architecture Design}
+% Done: Todo: Detailed component and connector view of software
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{Architecture.png}
+  \caption{Component and Connector View of the Software}
+  \label{fig:architecture}
+\end{figure}
+% Done: Todo: 1-2 paragraph explanation of architecture
+The system architecture follows a modular microservices-based approach to ensure scalability and maintainability. The core components of the system are:
+\begin{itemize}
+    \item \textbf{Client:} Developed using React.js, the frontend is responsible for user interaction and interface rendering. 
+    It handles user login, profile management, and real-time chat.
+    
+    \item \textbf{Server:} The backend is implemented using Node.js. It processes user requests, manages session data, and handles real-time communication through WebSockets.
+    
+    \item \textbf{Recommendation System:} Implemented in Python using Flask, the recommendation system generates friend and group suggestions based on a collaborative filtering model using user preferences data. It also creates groups using clustering methods like K means for interest group detection.
+    
+    \item \textbf{Database:} PostgreSQL is used for structured data such as user profiles and connections.
+    
+    \item \textbf{Google Firebase Authentication:} Firebase is used to authenticate users through their institutional email IDs, ensuring secure and restricted access.
+    
+    \item \textbf{Connectors:} The frontend and server communicate over http. The server communicates with the recommendation system using REST APIs. The server communicates with the database using prisma. The recommendation system acceses the database with psycopg2.
+\end{itemize}
+
+This architecture ensures a clear separation of concerns, allowing independent scaling of components and easier maintenance. The REST API-based communication provides flexibility, while WebSocket connections handle real-time data exchange efficiently.
+
+\subsection{ATAM Analysis of the Architecture}
+% Done: Todo: ATAM analysis of your proposed architecture. Do the analysis for preferably 5-8 distinct scenarios.
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.25}
+    \begin{tabular}{|p{3.5cm}|p{2.5cm}|p{4cm}|p{4cm}|}
+        \hline
+        \textbf{Scenario} & \textbf{Quality Attribute} & \textbf{Trade-off} & \textbf{Possible Solution} \\
+        \hline
+        High User Load During Peak Hours & Performance, Scalability & Increased load may slow down real-time chat and recommendations. & Use a load balancer and increase backend replicas during peak hours. \\
+        \hline
+        New User Signup and Onboarding & Usability, Performance & Delay in recommendation updates after signup. & Implement asynchronous processing for recommendation updates. \\
+        \hline
+        Real-time Chat with Multiple Users & Performance, Scalability & Increased latency with multiple concurrent chat users. & Use WebSocket-based communication for real-time performance. \\
+        \hline
+        Handling Data Consistency During Network Failures & Reliability, Availability & Loss of chat or friend request data during outages. & Use transaction logging and retry mechanisms. \\
+        \hline
+        Privacy Concern with Identity Reveal & Security, Privacy & User discomfort with accidental identity reveal. & Double-confirmation before identity reveal. \\
+        \hline
+        System Crash During High Load & Fault Tolerance & Temporary unavailability. & Deploy automatic failover and container-based recovery. \\
+        \hline
+        User Switching Between Devices & Usability, Compatibility & Sync issues and inconsistent state. & Use session-based state storage and WebSocket reconnection. \\
+        \hline
+        Friend Recommendation Failing Due to Model Update & Performance, Accuracy & Slow updates in recommendations. & Cache recent recommendations and refresh models periodically. \\
+        \hline
+    \end{tabular}
+    \caption{ATAM Analysis of Proposed Architecture}
+\end{table}
+
+
+\section{Data Flow Diagram (DFD)}
+\begin{figure}[!h]
+\vspace{0 cm}
+  \centering
+\includegraphics[angle=90, width=1.1\textwidth, height=0.8\textheight]{FINAL.drawio.png}
+  \caption{Data Flow Diagram}
+  \label{fig:yourimage}
+\end{figure}
+\subsection{Abstract Input and Output}
+
+\subsubsection{Most Abstract Input}
+The most abstract input to the system can be generalized as:
+
+\begin{itemize}
+    \item \textbf{User Actions}: These encompass all interactions initiated by the user within the system. The key user actions include:
+    \begin{itemize}
+        \item Registration and authentication using institutional email credentials.
+        \item Setting up and updating user profile information, including hobbies and preferences.
+        \item Sending and receiving friend/group recommendations and requests.
+        \item Engaging in conversations, including anonymous chatting.
+        \item Requesting identity reveals and accepting/rejecting such requests.
+        \item Blocking/unblocking users based on preferences.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Most Abstract Output}
+The system's most abstract output is:
+
+\begin{itemize}
+    \item \textbf{User Connections and Interactions}: These are the final outcomes generated by processing the user actions. The key outputs include:
+    \begin{itemize}
+        \item Successfully authenticated users gaining access to the platform.
+        \item Personalized recommendations for new friends and groups based on shared interests.
+        \item Established connections through accepted friend requests and group formations.
+        \item Real-time or asynchronous messaging between users.
+        \item Identity reveal status updates based on user interactions.
+        \item Blocked users and restricted communications as per user preferences.
+    \end{itemize}
+\end{itemize}
+
+The system takes user actions as input and processes them through multiple components, ultimately producing meaningful social connections and engagement among college students.
+
+
+
+\section{Structure Charts}
+\subsection{First Level Factored Modules}
+These are the majority variations of functional modules that structure the entire system:
+
+\begin{itemize}
+    \item \textbf{Client Side Application} – Covers user interaction modules such as login, signup, messaging, etc.
+    \item \textbf{Server Side Application} – Manages database interactions and server-side processing.
+    \item \textbf{Recommendation System} – Generates recommendations based on user data as well as identifies new groups based on clustering algorithms.
+    \item \textbf{Request Handler} – Processes user requests and calls appropriate modules for handling.
+\end{itemize}
+
+\subsection{Factored Input Modules}
+The input modules are responsible for handling user inputs and requests. These modules include:
+
+% \textbf{Client-side application modules:}
+\begin{itemize}
+    \item Sign up
+    \item Log in
+    \item Log out
+    \item Set Preferences / Profile
+    \item Edit preferences
+    % \item View profile
+    % \item View preferences
+    \item Edit profile
+    \item Send a Friend Request
+    \item Accept a Friend Request
+    \item Reject a Friend Request
+    % \item Get Recommendations from server
+    % \item Get Current Friends And Groups
+    % \item Receive New/Old Messages/Requests From other Group/User
+    \item Send a Message To Another Group/User
+    \item Send a reveal request
+    % \item Fetch Reveal Request
+    \item Accept Reveal Request
+    \item Reveal Identity to another User
+    \item Block a User/Group
+    \item Reject a Group join Invitation
+    \item Accept a Group join Invitation
+% \end{itemize}
+
+% \textbf{Server modules:}
+% \begin{itemize}
+    % \item Authenticate User
+    % \item Create User Profile
+    % \item Save Profile / Preferences
+    % \item Fetch Profile / Preferences
+    % \item Fetch Recommendations
+    % \item Update Friendships
+    % \item Update Group membership
+    % \item Fetch Current Friends/Groups
+    % \item Fetch Messages/Requests
+    \item Send Messages
+    \item Send Reveal Request
+    % \item Update Identity Revealed Status
+    % \item Fetch Users reveal's and Revealed List
+    % \item Update Users Block List
+    % \item Add New Groups
+    % \item Request Handler
+% \end{itemize}
+
+% \textbf{Recommendation system modules:}
+% \begin{itemize}
+    % \item Request Handler
+    % \item Get Groups from Database
+    % \item Recommend Groups
+    % \item Recommend Friends
+    % \item Get Users from Database
+    % \item Get list of new Groups
+\end{itemize}
+
+\subsection{Factored Output Modules}
+The output modules are responsible for generating and displaying the results based on user inputs and system processing. These modules include:
+
+% \textbf{Client-side application modules:}
+\begin{itemize}
+    \item View profile
+    \item View preferences
+    \item Get Recommendations from server
+    \item Get Current Friends And Groups
+    \item Receive New/Old Messages/Requests From other Group/User
+% \end{itemize}
+
+% \textbf{Server modules:}
+% \begin{itemize}
+    \item Fetch Reveal Request
+    \item Fetch Profile / Preferences
+    \item Fetch Recommendations
+    \item Fetch Current Friends/Groups
+    \item Fetch Messages/Requests
+    \item Fetch Users reveal's and Revealed List
+    \item Add New Groups
+% \end{itemize}
+
+% \textbf{Recommendation system modules:}
+% \begin{itemize}
+    \item Get Groups from Database
+    \item Get Users from Database
+\end{itemize}
+
+\subsection{Factored Transform Modules}
+The transform modules are responsible for processing the data and performing the necessary computations to generate the desired outputs. These modules include:
+
+% \textbf{Client-side application modules:}
+\begin{itemize}
+    % \item Set Preferences / Profile
+    % \item Edit preferences
+    % \item Edit profile
+    % \item Send a Friend Request
+    % \item Accept a Friend Request
+    % \item Reject a Friend Request
+    % \item Send a Message To Another Group/User
+    % \item Send a reveal request
+    % \item Fetch Reveal Request
+    % \item Accept Reveal Request
+    % \item Reveal Identity to another User
+    % \item Block a User/Group
+    % \item Reject a Group join Invitation
+    % \item Accept a Group join Invitation
+% \end{itemize}
+
+% \textbf{Server modules:}
+% \begin{itemize}
+    % \item Authenticate User
+    \item Create User Profile
+    \item Save Profile / Preferences
+    \item Update Friendships
+    \item Update Group membership
+    % \item Send Messages
+    % \item Send Reveal Request
+    \item Update Identity Revealed Status
+    \item Update Users Block List
+    % \item Request Handler
+% \end{itemize}
+
+% \textbf{Recommendation system modules:}
+% \begin{itemize}
+    % \item Request Handler
+    \item Recommend Groups
+    \item Recommend Friends
+    \item Get list of new Groups
+\end{itemize}
+
+\subsection{Final structure chart showing all the modules}
+\begin{figure}
+    \hspace{-3cm}
+    \includegraphics[width=1.4\linewidth]{Structure_chart.pdf}
+    \caption{Structure Chart}
+    \label{fig:enter-label}
+\end{figure}
+\newpage
+
+\section{Design Analysis}
+
+\subsection{Module List and Description}
+\begin{table}[H]
+\hspace{-1.6cm}
+    \renewcommand{\arraystretch}{1.25}
+    \begin{tabular}{|p{4cm}|p{2cm}|p{3cm}|p{6cm}|}
+        \hline
+        \textbf{Module} & \textbf{Type} & \textbf{Cohesion} & \textbf{Description} \\
+        \hline
+        Sign up & Input & Functional & Handles user registration using institutional email. \\
+        \hline
+        Log in & Input & Functional & Authenticates user and grants access to the platform. \\
+        \hline
+        Log out & Input & Functional & Ends user session and logs out the user. \\
+        \hline
+        Set Preferences / Profile & Input & Functional & Allows users to set their preferences and profile details. \\
+        \hline
+        Edit preferences & Input & Functional & Enables users to update their preferences. \\
+        \hline
+        View profile & Output & Functional & Displays user profile information. \\
+        \hline
+        View preferences & Output & Functional & Shows user preferences. \\
+        \hline
+        Edit profile & Input & Functional & Allows users to update their profile details. \\
+        \hline
+        Send a Friend Request & Input & Functional & Sends a friend request to another user. \\
+        \hline
+        Accept a Friend Request & Input & Functional & Accepts a received friend request. \\
+        \hline
+        Reject a Friend Request & Input & Functional & Rejects a received friend request. \\
+        \hline
+        Get Recommendations from server & Output & Functional & Fetches friend and group recommendations from the server. \\
+        \hline
+        Get Current Friends And Groups & Output & Functional & Retrieves the list of current friends and groups. \\
+        \hline
+            \end{tabular}
+    \caption{List of All Modules}
+\end{table}
+\begin{table}[H]
+    \hspace{-1.6cm}
+    \renewcommand{\arraystretch}{1.25}
+    \begin{tabular}{|p{4cm}|p{2cm}|p{3cm}|p{6cm}|}
+    \hline
+        Receive New/Old Messages/Requests From other Group/User & Output & Procedural & Receives messages and requests from other users or groups. \\
+        \hline
+        Send a Message To Another Group/User & Input & Functional & Sends a message to another user or group. \\
+        \hline
+        Send a reveal request & Input & Functional & Sends a request to reveal identity to another user. \\
+        \hline
+        Fetch Reveal Request & Output & Functional & Fetches reveal requests from other users. \\
+        \hline
+        Accept Reveal Request & Input & Functional & Accepts a reveal request from another user. \\
+        \hline
+        Reveal Identity to another User & Input & Functional & Reveals user's identity to another user. \\
+        \hline
+        Block a User/Group & Input & Functional & Blocks a user or group. \\
+        \hline
+        Reject a Group join Invitation & Input & Functional & Rejects a group join invitation. \\
+        \hline
+        Accept a Group join Invitation & Input & Functional & Accepts a group join invitation. \\
+        \hline
+        Authenticate User & Coordinate & Functional & Authenticates user credentials. \\
+        \hline
+        Create User Profile & Transform & Procedural & Creates a new user profile. \\
+        \hline
+        Save Profile / Preferences & Transform & Functional & Saves user profile and preferences. \\
+        \hline
+        Fetch Profile / Preferences & Output & Functional & Fetches user profile and preferences. \\
+        \hline
+        Fetch Recommendations & Output & Functional & Retrieves friend and group recommendations. \\
+        \hline
+        Update Friendships & Transform & Functional & Updates user friendships. \\
+        \hline
+        Update Group membership & Transform & Functional & Updates user group memberships. \\
+        \hline
+        Fetch Current Friends/Groups & Output & Functional & Retrieves current friends and groups. \\
+        \hline
+        Fetch Messages/Requests & Output & Functional & Fetches messages and requests. \\
+        \hline
+        \end{tabular}
+    \caption{List of All Modules}
+\end{table}
+\begin{table}[H]
+    \hspace{-1.6cm}
+    \renewcommand{\arraystretch}{1.25}
+    \begin{tabular}{|p{4cm}|p{2cm}|p{3cm}|p{6cm}|}
+    \hline
+        Send Messages & Input & Functional & Sends messages to users or groups. \\
+        \hline
+        Send Reveal Request & Input & Functional & Sends a reveal request to another user. \\
+        \hline
+        Update Identity Revealed Status & Transform & Functional & Updates the status of identity reveal. \\
+        \hline
+        Fetch Users reveal's and Revealed List & Output & Functional & Fetches the list of users who have revealed their identity. \\
+        \hline
+        Update Users Block List & Transform & Functional & Updates the list of blocked users. \\
+        \hline
+        Add New Groups & Output & Functional & Adds new groups to the system. \\
+        \hline
+        Server Request Handler & Coordinate & Communication & Handles server's incoming requests and routes them to appropriate modules. \\
+        \hline
+        Recommendation System Request Handler & Coordinate & Communication & Handles incoming requests and routes them to appropriate modules. \\
+        \hline
+        Get Groups from Database & Output & Functional & Retrieves groups from the database. \\
+        \hline
+        Recommend Groups & Transform & Functional & Generates group recommendations. \\
+        \hline
+        Recommend Friends & Transform & Functional & Generates friend recommendations. \\
+        \hline
+        Get Users from Database & Output & Functional & Retrieves users from the database. \\
+        \hline
+        Get list of new Groups & Transform & Functional & Creates a list of new groups. \\
+        \hline
+    \end{tabular}
+    \caption{List of All Modules}
+\end{table}
+
+\subsection{Module Count by Type}
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.25}
+    \begin{tabular}{|p{4cm}|p{4cm}|}
+        \hline
+        \textbf{Module Type} & \textbf{Count} \\
+        \hline
+        Input & 18 \\
+        \hline
+        Output & 14 \\
+        \hline
+        Transform & 9 \\
+        \hline
+        Coordinate & 3 \\
+        \hline
+        Composite & 0 \\
+        \hline
+    \end{tabular}
+    \caption{Count of Modules by Type}
+\end{table}
+
+\subsection{Complex or Error-Prone Modules}
+\begin{itemize}
+    \item \textbf{Input: Send a Message To Another Group/User} - This module is complex due to the need for real-time message delivery and handling various edge cases like network failures.
+    \item \textbf{Transform: Recommend Friends} - This module is error-prone because it involves complex algorithms for generating accurate friend recommendations based on user preferences and activities.
+    \item \textbf{Output: Fetch Messages/Requests} - This module is complex as it needs to handle a large volume of messages and requests efficiently, ensuring timely delivery and consistency.
+\end{itemize}
+
+\subsection{Top-3 Modules by Fan Out and Fan In}
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.25}
+    \begin{tabular}{|p{4cm}|p{2cm}|p{2cm}|}
+        \hline
+        \textbf{Module} & \textbf{Fan Out} & \textbf{Fan In} \\
+        \hline
+        Server Request Handler & 14 & 22 \\
+        \hline
+        Recommendation System Request Handler & 3 & 2 \\
+        \hline
+        Create User profile & 2 & 1 \\
+        \hline
+    \end{tabular}
+    \caption{Top-3 Modules by Fan Out and Fan In}
+\end{table}
+
+
+\section{Detailed Design Specification}
+\textbf{Interface of all the final level factored modules in the form of classes with attributes and methods:}
+
+\begin{lstlisting}
+
+class SignUp:
+    def __init__(self, gmail):
+        self.email = gmail
+
+    def register(self):
+        pass
+
+
+class LogIn:
+    def __init__(self, gmail):
+        self.email = gmail
+
+    def authenticate(self):
+        pass
+
+
+class LogOut:
+    def __init__(self, user_id):
+        self.user_id = user_id
+
+    def logout(self):
+        pass
+
+
+class SetPreferencesProfile:
+    def __init__(self, user_id, preferences):
+        self.user_id = user_id
+        self.preferences = preferences
+
+    def set_preferences(self):
+        pass
+
+
+class EditPreferences:
+    def __init__(self, user_id, preferences):
+        self.user_id = user_id
+        self.preferences = preferences
+
+    def edit_preferences(self):
+        pass
+
+
+class ViewProfile:
+    def __init__(self, user_id):
+        self.user_id = user_id
+
+    def view_profile(self):
+        pass
+
+
+class ViewPreferences:
+    def __init__(self, user_id):
+        self.user_id = user_id
+
+    def view_preferences(self):
+        pass
+
+
+class EditProfile:
+    def __init__(self, user_id, profile_data):
+        self.user_id = user_id
+        self.profile_data = profile_data
+
+    def edit_profile(self):
+        pass
+
+
+class SendFriendRequest:
+    def __init__(self, user_id, friend_id):
+        self.user_id = user_id
+        self.friend_id = friend_id
+
+    def send_request(self):
+        pass
+
+
+class AcceptFriendRequest:
+    def __init__(self, user_id, friend_request_id):
+        self.user_id = user_id
+        self.friend_request_id = friend_request_id
+
+    def accept_request(self):
+        pass
+
+
+class RejectFriendRequest:
+    def __init__(self, user_id, friend_request_id):
+        self.user_id = user_id
+        self.friend_request_id = friend_request_id
+
+    def reject_request(self):
+        pass
+
+
+class GetRecommendationsFromServer:
+    def __init__(self, user_id):
+        self.user_id = user_id
+
+    def get_recommendations(self):
+        pass
+
+
+class GetCurrentFriendsAndGroups:
+    def __init__(self, user_id):
+        self.user_id = user_id
+
+    def get_friends_groups(self):
+        pass
+
+
+class ReceiveMessagesRequests:
+    def __init__(self, user_id, chat_id):
+        self.user_id = user_id
+        self.chat_id = chat_id
+
+    def receive_messages_requests(self):
+        pass
+
+
+class SendMessageToGroupOrUser:
+    def __init__(self, user_id, chat_id, message):
+        self.user_id = user_id
+        self.chat_id = chat_id
+        self.message = message
+
+    def send_message(self):
+        pass
+
+
+class SendRevealRequest:
+    def __init__(self, user_id, recipient_id):
+        self.user_id = user_id
+        self.recipient_id = recipient_id
+
+    def send_reveal_request(self):
+        pass
+
+
+class FetchRevealRequest:
+    def __init__(self, user_id):
+        self.user_id = user_id
+
+    def fetch_reveal_request(self):
+        pass
+
+
+class AcceptRevealRequest:
+    def __init__(self, user_id, requester_id):
+        self.user_id = user_id
+        self.requester_id = requester_id
+
+    def accept_reveal_request(self):
+        pass
+
+
+class RevealIdentityToUser:
+    def __init__(self, user_id, recipient_id):
+        self.user_id = user_id
+        self.recipient_id = recipient_id
+
+    def reveal_identity(self):
+        pass
+
+
+class BlockUserGroup:
+    def __init__(self, user_id, chat_id):
+        self.user_id = user_id
+        self.chat_id = chat_id
+
+    def block(self):
+        pass
+
+
+class RejectGroupJoinInvitation:
+    def __init__(self, user_id, group_id):
+        self.user_id = user_id
+        self.group_id = group_id
+
+    def reject_invitation(self):
+        pass
+
+
+class AcceptGroupJoinInvitation:
+    def __init__(self, user_id, group_id):
+        self.user_id = user_id
+        self.group_id = group_id
+
+    def accept_invitation(self):
+        pass
+
+
+class AuthenticateUser:
+    def __init__(self, email):
+        self.email = email
+
+    def authenticate(self):
+        pass
+
+
+class CreateUserProfile:
+    def __init__(self, user_data):
+        self.user_data = user_data
+
+    def create_profile(self):
+        pass
+
+
+class SaveProfilePreferences:
+    def __init__(self, user_id, profile_data):
+        self.user_id = user_id
+        self.profile_data = profile_data
+
+    def save_profile_preferences(self):
+        pass
+
+
+class FetchProfilePreferences:
+    def __init__(self, user_id):
+        self.user_id = user_id
+
+    def fetch_profile_preferences(self):
+        pass
+
+
+class FetchRecommendations:
+    def __init__(self, user_id):
+        self.user_id = user_id
+
+    def fetch_recommendations(self):
+        pass
+
+
+class UpdateFriendships:
+    def __init__(self, user_id, friend_id, action):
+        self.user_id = user_id
+        self.friend_id = friend_id
+        self.action = action
+
+    def update_friendships(self):
+        pass
+
+
+class UpdateGroupMembership:
+    def __init__(self, user_id, group_id, action):
+        self.user_id = user_id
+        self.group_id = group_id
+        self.action = action
+
+    def update_group_membership(self):
+        pass
+
+
+class FetchCurrentFriendsGroups:
+    def __init__(self, user_id):
+        self.user_id = user_id
+
+    def fetch_current_friends_groups(self):
+        pass
+
+
+class FetchMessagesRequests:
+    def __init__(self, user_id):
+        self.user_id = user_id
+
+    def fetch_messages_requests(self):
+        pass
+
+
+class SendMessages:
+    def __init__(self, user_id, chat_id, message):
+        self.user_id = user_id
+        self.recipient_id = chat_id
+        self.message = message
+
+    def send_messages(self):
+        pass
+
+
+class SendRevealRequest:
+    def __init__(self, user_id, recipient_id):
+        self.user_id = user_id
+        self.recipient_id = recipient_id
+
+    def send_reveal_request(self):
+        pass
+
+
+class UpdateIdentityRevealedStatus:
+    def __init__(self, user_id, recipient_id, status):
+        self.user_id = user_id
+        self.recipient_id = recipient_id
+        self.status = status
+
+    def update_identity_revealed_status(self):
+        pass
+
+
+class FetchUsersRevealsList:
+    def __init__(self, user_id):
+        self.user_id = user_id
+
+    def fetch_users_reveals_list(self):
+        pass
+
+
+class UpdateUsersBlockList:
+    def __init__(self, user_id, chat_id, action):
+        self.user_id = user_id
+        self.chat_id = chat_id
+        self.action = action
+
+    def update_users_block_list(self):
+        pass
+
+
+class AddNewGroups:
+    def __init__(self):
+
+    def add_new_groups(self):
+        pass
+
+
+class ServerRequestHandler:
+    def __init__(self, request):
+        self.request = request
+
+    def handle_request(self):
+        pass
+
+
+class RecommendationSystemRequestHandler:
+    def __init__(self, request):
+        self.request = request
+
+    def handle_request(self):
+        pass
+
+
+class GetGroupsFromDatabase:
+    def __init__(self):
+        pass
+
+    def get_groups(self):
+        pass
+
+
+class RecommendGroups:
+    def __init__(self, user_id):
+        self.user_id = user_id
+
+    def recommend_groups(self):
+        pass
+
+
+class RecommendFriends:
+    def __init__(self, user_id):
+        self.user_id = user_id
+
+    def recommend_friends(self):
+        pass
+
+
+class GetUsersFromDatabase:
+    def __init__(self):
+        pass
+
+    def get_users(self):
+        pass
+
+
+class GetListOfNewGroups:
+    def __init__(self):
+        pass
+
+    def get_list_of_new_groups(self):
+        pass
+
+\end{lstlisting}
+
+\end{document}
+

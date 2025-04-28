@@ -123,6 +123,10 @@ BEGIN
           SELECT receiver_id
           FROM friendship_request
           WHERE sender_id = input_user_id
+          UNION
+          SELECT sender_id
+          FROM friendship_request
+          WHERE receiver_id = input_user_id
       );
 END;
 $$ LANGUAGE plpgsql;

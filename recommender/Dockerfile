@@ -14,12 +14,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Expose the port the application runs on
-EXPOSE 5000
+EXPOSE 8000
 
 # Set environment variables
 ENV FLASK_APP=request_handler.py
-ENV FLASK_RUN_HOST=0.0.0.0
-ENV FLASK_RUN_PORT=5000
 
-# Command to run the application
-CMD ["flask", "run"]
+# Command to run the application using Gunicorn
+CMD ["gunicorn", "-w", "2", "--threads", "2", "-b", "0.0.0.0:8000", "app:app"]

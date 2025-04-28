@@ -1,11 +1,7 @@
 # Imports
 from db_connection import create_connection_pool
 from flask import Flask, request, jsonify
-from dotenv import load_dotenv
 import recommend
-
-# loading environment variables
-load_dotenv()
 
 # Initialize the connection pool
 connection_pool = create_connection_pool()

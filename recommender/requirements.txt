@@ -1,6 +1,7 @@
-flask
-python-dotenv
 psycopg2-binary
+python-dotenv
 scikit-learn
+gunicorn
+flask
 scipy
 numpy
