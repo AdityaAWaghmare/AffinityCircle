@@ -56,7 +56,7 @@ def insert_new_group(connection_pool, group_name, hobby_rating_list):
     try:
         conn = connection_pool.getconn() # Get a connection from the pool
         with conn.cursor() as cursor:
-            cursor.execute("SELECT RS_CreateGroup(%s, %s, %s, %s, %s, %s)", (group_name, hobby_rating_list[0], hobby_rating_list[1], hobby_rating_list[2], hobby_rating_list[3], hobby_rating_list[4]))
+            cursor.execute("SELECT RS_CreateGroup(%s, %s)", (group_name, hobby_rating_list))
             conn.commit()
         return True
     except (DatabaseError, OperationalError) as e:

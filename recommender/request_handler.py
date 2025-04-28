@@ -58,7 +58,6 @@ def create_group():
     if not group_name:
         return jsonify({'error': 'Group name is required'}), 400
     try:
-        user = int(user)
         success = recommend.create_new_group(connection_pool, group_name)
         if success == 500:
             return jsonify({'error': 'Error in creating group'}), 500

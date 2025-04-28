@@ -18,8 +18,8 @@ def recommend_friends(connection_pool, user_id):
     if not current_user_data or not other_users_data:
         return 204  # No content to recommend
 
-    current_user_array = np.array(current_user_data)
-    users_data_array = np.array(other_users_data)
+    current_user_array = np.array([[i]+lst for (i, lst) in current_user_data], dtype=np.float32)
+    users_data_array = np.array([[i]+lst for (i, lst) in other_users_data], dtype=np.float32)
 
     # Compute cosine similarity between the current user and all other users
     similarities = cosine_similarity(current_user_array[:, 1:], users_data_array[:, 1:])[0]
@@ -29,7 +29,7 @@ def recommend_friends(connection_pool, user_id):
     top_indices = np.argsort(similarities)[-N:][::-1]  # Get the indices of the top N similar users
 
     # Extract the user IDs of the top N similar users and ensure they are integers
-    recommended_users = users_data_array[top_indices, 0].astype(int).flatten().tolist()
+    recommended_users = users_data_array[top_indices, 0].astype(np.int32).flatten().tolist()
     similarity_scores = similarities[top_indices].tolist()
 
     # Zip recommended users with their similarity scores
@@ -51,8 +51,8 @@ def recommend_groups(connection_pool, user_id):
     if not current_user_data or not group_data:
         return 204  # No content to recommend
 
-    current_user_array = np.array(current_user_data)
-    group_data_array = np.array(group_data)
+    current_user_array = np.array([[i] + lst for (i, lst) in current_user_data], dtype=np.float32)
+    group_data_array = np.array([[i] + lst for (i, lst) in group_data], dtype=np.float32)
 
     # Compute cosine similarity between the current user and all other groups
     similarities = cosine_similarity(current_user_array[:, 1:], group_data_array[:, 1:])[0]
@@ -62,7 +62,7 @@ def recommend_groups(connection_pool, user_id):
     top_indices = np.argsort(similarities)[-N:][::-1]  # Get the indices of the top N similar groups
 
     # Extract the group IDs of the top N similar groups
-    recommended_groups = group_data_array[top_indices, 0].astype(int).flatten().tolist()
+    recommended_groups = group_data_array[top_indices, 0].astype(np.int32).flatten().tolist()
     similarity_scores = similarities[top_indices].tolist()
 
     # Zip recommended groups with their similarity scores
@@ -85,13 +85,13 @@ def create_new_group(connection_pool, group_name):
     if not users_data or not groups_data:
         return []
 
-    users_data_array = np.array(users_data, dtype=np.float64)
-    groups_data_array = np.array(groups_data, dtype=np.float64)
+    users_data_array = np.array([[i] + lst for (i, lst) in users_data], dtype=np.float32)
+    groups_data_array = np.array([[i] + lst for (i, lst) in groups_data], dtype=np.float32)
 
     # Normalize user feature vectors (excluding ID column) for closer approximation of cosine through euclidean k means
-    users_data_array[:, 1:] = normalize(users_data_array[:, 1:], norm='l2')
+    users_data_array[:, 1:] = normalize(users_data_array[:, 1:], norm='l2', axis=1)
 
-    n_clusters = users_data_array.shape[0] // 10 + 1
+    n_clusters = min(users_data_array.shape[0] // 10 + 1, int(os.getenv("MAX_CLUSTERS", 100)))
     
     # Perform k-means clustering on users_data
     kmeans = KMeans(n_clusters=n_clusters, random_state=42)

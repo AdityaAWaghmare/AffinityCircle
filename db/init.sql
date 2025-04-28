@@ -8,11 +8,7 @@ CREATE TABLE users (
     display_name VARCHAR(255), -- Display name for the user
     profile_pic INTEGER, -- Profile picture ID
     bio TEXT,
-    hobby1_rating INTEGER,
-    hobby2_rating INTEGER,
-    hobby3_rating INTEGER,
-    hobby4_rating INTEGER,
-    hobby5_rating INTEGER,
+    hobby_rating INTEGER[5], -- Array of hobby ratings
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP -- Timestamp of account creation
 );
 
@@ -21,7 +17,7 @@ CREATE TABLE friendship_request (
     sender_id INTEGER NOT NULL REFERENCES users(user_id), -- User who sent the request
     receiver_id INTEGER NOT NULL REFERENCES users(user_id), -- User who received the request
     PRIMARY KEY (sender_id, receiver_id),
-    similarity_score FLOAT, -- Similarity score between the two users
+    similarity_score REAL, -- Similarity score between the two users
     recommendation_status INTEGER NOT NULL CHECK (recommendation_status IN (0, 1, 2)), -- 0: pending, 1: accepted(and converted to a request), 2: rejected
     status INTEGER NOT NULL CHECK (status IN (0, 1, 2)), -- 0: pending, 1: accepted, 2: rejected
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP -- Timestamp of the request
@@ -42,11 +38,7 @@ CREATE TABLE friendship (
 CREATE TABLE groups (
     group_id SERIAL PRIMARY KEY, -- Auto-incrementing unique ID
     group_name VARCHAR(255) NOT NULL, -- Name of the group
-    hobby1_rating FLOAT,
-    hobby2_rating FLOAT,
-    hobby3_rating FLOAT,
-    hobby4_rating FLOAT,
-    hobby5_rating FLOAT,
+    hobby_rating REAL[5],
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP -- Timestamp of group creation
 );
 
@@ -54,7 +46,7 @@ CREATE TABLE group_recommendation (
     group_id INTEGER NOT NULL REFERENCES groups(group_id), -- Group ID
     user_id INTEGER NOT NULL REFERENCES users(user_id), -- User ID
     PRIMARY KEY (group_id, user_id),
-    similarity_score FLOAT, -- Similarity score between the user and the group
+    similarity_score REAL, -- Similarity score between the user and the group
     status INTEGER NOT NULL CHECK (status IN (0, 1, 2)), -- 0: pending, 1: accepted, 2: rejected
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP -- Timestamp of the request
 );
@@ -93,15 +85,11 @@ CREATE TABLE group_message (
 CREATE OR REPLACE FUNCTION RS_GetUser(input_user_id INTEGER)
 RETURNS TABLE (
     user_id INTEGER,
-    hobby1_rating INTEGER,
-    hobby2_rating INTEGER,
-    hobby3_rating INTEGER,
-    hobby4_rating INTEGER,
-    hobby5_rating INTEGER
+    hobby_rating INTEGER[5]
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT u.user_id, u.hobby1_rating, u.hobby2_rating, u.hobby3_rating, u.hobby4_rating, u.hobby5_rating
+    SELECT u.user_id, u.hobby_rating
     FROM users u
     WHERE u.user_id = input_user_id;
 END;
@@ -111,15 +99,11 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION RS_GetAllUsers()
 RETURNS TABLE (
     user_id INTEGER,
-    hobby1_rating INTEGER,
-    hobby2_rating INTEGER,
-    hobby3_rating INTEGER,
-    hobby4_rating INTEGER,
-    hobby5_rating INTEGER
+    hobby_rating INTEGER[5]
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT u.user_id, u.hobby1_rating, u.hobby2_rating, u.hobby3_rating, u.hobby4_rating, u.hobby5_rating
+    SELECT u.user_id, u.hobby_rating
     FROM users u;
 END;
 $$ LANGUAGE plpgsql;
@@ -128,15 +112,11 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION RS_NeverRecommendedUsers(input_user_id INTEGER)
 RETURNS TABLE (
     user_id INTEGER,
-    hobby1_rating INTEGER,
-    hobby2_rating INTEGER,
-    hobby3_rating INTEGER,
-    hobby4_rating INTEGER,
-    hobby5_rating INTEGER
+    hobby_rating INTEGER[5]
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT u.user_id, u.hobby1_rating, u.hobby2_rating, u.hobby3_rating, u.hobby4_rating, u.hobby5_rating
+    SELECT u.user_id, u.hobby_rating
     FROM users u
     WHERE u.user_id != input_user_id
       AND u.user_id NOT IN (
@@ -151,15 +131,11 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION RS_GetAllGroups()
 RETURNS TABLE (
     group_id INTEGER,
-    hobby1_rating FLOAT,
-    hobby2_rating FLOAT,
-    hobby3_rating FLOAT,
-    hobby4_rating FLOAT,
-    hobby5_rating FLOAT
+    hobby_rating REAL[5]
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT g.group_id, g.hobby1_rating, g.hobby2_rating, g.hobby3_rating, g.hobby4_rating, g.hobby5_rating
+    SELECT g.group_id, g.hobby_rating
     FROM groups g;
 END;
 $$ LANGUAGE plpgsql;
@@ -168,15 +144,11 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION RS_NeverRecommendedGroups(input_user_id INTEGER)
 RETURNS TABLE (
     group_id INTEGER,
-    hobby1_rating FLOAT,
-    hobby2_rating FLOAT,
-    hobby3_rating FLOAT,
-    hobby4_rating FLOAT,
-    hobby5_rating FLOAT
+    hobby_rating REAL[5]
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT g.group_id, g.hobby1_rating, g.hobby2_rating, g.hobby3_rating, g.hobby4_rating, g.hobby5_rating
+    SELECT g.group_id, g.hobby_rating
     FROM groups g
     WHERE g.group_id NOT IN (
         SELECT gr.group_id
@@ -187,7 +159,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- insert friend recommendations into friendship_request table
-CREATE OR REPLACE FUNCTION RS_SendFriendRecommendation(input_sender_id INTEGER, input_receiver_id INTEGER, input_similarity_score FLOAT)
+CREATE OR REPLACE FUNCTION RS_SendFriendRecommendation(input_sender_id INTEGER, input_receiver_id INTEGER, input_similarity_score REAL)
 RETURNS VOID AS $$
 BEGIN
     INSERT INTO friendship_request (sender_id, receiver_id, similarity_score, recommendation_status, status)
@@ -196,7 +168,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- insert group recommendations into group_recommendation table
-CREATE OR REPLACE FUNCTION RS_SendGroupRecommendation(input_group_id INTEGER, input_user_id INTEGER, input_similarity_score FLOAT)
+CREATE OR REPLACE FUNCTION RS_SendGroupRecommendation(input_group_id INTEGER, input_user_id INTEGER, input_similarity_score REAL)
 RETURNS VOID AS $$
 BEGIN
     INSERT INTO group_recommendation (group_id, user_id, similarity_score, status)
@@ -205,33 +177,33 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- insert new group into groups table
-CREATE OR REPLACE FUNCTION RS_CreateGroup(input_group_name VARCHAR, input_hobby1_rating FLOAT, input_hobby2_rating FLOAT, input_hobby3_rating FLOAT, input_hobby4_rating FLOAT, input_hobby5_rating FLOAT)
+CREATE OR REPLACE FUNCTION RS_CreateGroup(input_group_name VARCHAR, input_hobby_rating REAL[5])
 RETURNS VOID AS $$
 BEGIN
-    INSERT INTO groups (group_name, hobby1_rating, hobby2_rating, hobby3_rating, hobby4_rating, hobby5_rating)
-    VALUES (input_group_name, input_hobby1_rating, input_hobby2_rating, input_hobby3_rating, input_hobby4_rating, input_hobby5_rating);
+    INSERT INTO groups (group_name, hobby_rating)
+    VALUES (input_group_name, input_hobby_rating);
 END;
 $$ LANGUAGE plpgsql;
 
 
 ----------------------------------------------- EXAMPLES -------------------------------------------------
 
-INSERT INTO users (email, verified_name, display_name, profile_pic, bio, hobby1_rating, hobby2_rating, hobby3_rating, hobby4_rating, hobby5_rating)
+INSERT INTO users (email, verified_name, display_name, profile_pic, bio, hobby_rating)
 VALUES
-('a@int.ac.in' , 'ico_A' , 'A' , 1 , 'bio_A' , 4 , 5 , 7 , 3 , 1),
-('b@int.ac.in' , 'ico_B' , 'B' , 2 , 'bio_B' , 3 , 4 , 5 , 2 , 1),
-('c@int.ac.in' , 'ico_C' , 'C' , 3 , 'bio_C' , 2 , 3 , 4 , 1 , 1),
-('d@int.ac.in' , 'ico_D' , 'D' , 4 , 'bio_D' , 10 , 9 , 1 , 10 , 10),
-('e@int.ac.in' , 'ico_E' , 'E' , 5 , 'bio_E' , 1 , 2 , 3 , 4 , 5),
-('f@int.ac.in' , 'ico_F' , 'F' , 6 , 'bio_F' , 10 , 3 , 4 , 5 , 6),
-('g@int.ac.in' , 'ico_G' , 'G' , 7 , 'bio_G' , 10 , 2 , 3 , 4 , 5)
+('a@int.ac.in' , 'ico_A' , 'A' , 1 , 'bio_A' , '{4 , 5 , 7 , 3 , 1}'),
+('b@int.ac.in' , 'ico_B' , 'B' , 2 , 'bio_B' , '{3 , 4 , 5 , 2 , 1}'),
+('c@int.ac.in' , 'ico_C' , 'C' , 3 , 'bio_C' , '{2 , 3 , 4 , 1 , 1}'),
+('d@int.ac.in' , 'ico_D' , 'D' , 4 , 'bio_D' , '{10 , 9 , 1 , 10 , 10}'),
+('e@int.ac.in' , 'ico_E' , 'E' , 5 , 'bio_E' , '{1 , 2 , 3 , 4 , 5}'),
+('f@int.ac.in' , 'ico_F' , 'F' , 6 , 'bio_F' , '{10 , 3 , 4 , 5 , 6}'),
+('g@int.ac.in' , 'ico_G' , 'G' , 7 , 'bio_G' , '{10 , 2 , 3 , 4 , 5}')
 ;
 
-INSERT INTO groups (group_name, hobby1_rating, hobby2_rating, hobby3_rating, hobby4_rating, hobby5_rating)
+INSERT INTO groups (group_name, hobby_rating)
 VALUES
-('group_A' , 1 , 2 , 3 , 4 , 5),
-('group_B' , 2 , 3 , 4 , 5 , 6),
-('group_C' , 3 , 4 , 5 , 6 , 7),
-('group_D' , 4 , 5 , 6 , 7 , 8),
-('group_E' , 5 , 6 , 7 , 8 , 9) 
+('group_A' , '{1 , 2 , 3 , 4 , 5}'),
+('group_B' , '{2 , 3 , 4 , 5 , 6}'),
+('group_C' , '{3 , 4 , 5 , 6 , 7}'),
+('group_D' , '{4 , 5 , 6 , 7 , 8}'),
+('group_E' , '{5 , 6 , 7 , 8 , 9}') 
 ;
