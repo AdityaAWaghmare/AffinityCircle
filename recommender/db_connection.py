@@ -7,8 +7,8 @@ def create_connection_pool():
     '''
     try:
         connection_pool = pool.SimpleConnectionPool(
-            minconn=1,
-            maxconn=2,
+            minconn=int(os.getenv("DB_MIN_CONN", 1)),
+            maxconn=int(os.getenv("DB_MAX_CONN", 2)),
             database=os.getenv("DB_NAME"),
             user=os.getenv("DB_USER"),
             password=os.getenv("DB_PASSWORD"),

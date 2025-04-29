@@ -17,6 +17,8 @@ COPY . .
 EXPOSE 8000
 
 # Set environment variables
+ENV DB_MIN_CONN=1
+ENV DB_MAX_CONN=2
 ENV FLASK_APP=request_handler.py
 
 # Command to run the application using Gunicorn

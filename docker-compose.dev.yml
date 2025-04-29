@@ -11,7 +11,7 @@ services:
   #   environment:
   #     - CHOKIDAR_USEPOLLING=true
 
-  db:
+  db: # Ready for recommender, conatins example data, need to update for server
     image: postgres:15
     restart: always
     environment:
@@ -27,7 +27,7 @@ services:
       timeout: 5s
       retries: 5
 
-  recommender:
+  recommender: # Updated for production but need to test
     build:
       context: ./recommender
       dockerfile: Dockerfile
@@ -43,7 +43,7 @@ services:
       db:
         condition: service_healthy
     
-  server:
+  server: # Developing
     build:
       context: ./server
       dockerfile: Dockerfile.dev
