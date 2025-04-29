@@ -17,6 +17,7 @@ router.get('/FetchRecommendations', async (req, res) => {
         `;
         const friendsResult = await pool.query(friendsQuery, [acuid]);
         // if no recommendations, call the recommender service
+
         if (friendsResult.rows.length === 0) {
             await axios.get(`${recommenderServiceUrl}/recommend_users`, {
                 headers: {'Content-Type': 'application/json',},
@@ -47,7 +48,49 @@ router.get('/FetchRecommendations', async (req, res) => {
             groupsResult = await pool.query(groupsQuery, [acuid]);
         }
 
-        res.status(200).json({ FriendRecommendations: friendsResult.rows, FriendRequest: friendRequestResult.rows, GroupRecommendation: groupsResult.rows });
+        // get info of recommendations
+
+        const friendRecIds = friendsResult.rows.map(row => row.receiver_id);
+        const friendReqtIds = friendRequestResult.rows.map(row => row.sender_id);
+        const groupIds = groupsResult.rows.map(row => row.group_id);
+
+        const friendRecQuery = `
+            SELECT user_id, display_name, bio, hobby_rating FROM users WHERE user_id IN (${friendRecIds.join(',')})
+            `;
+        const friendRecResult = await pool.query(friendRecQuery, []);
+
+        const friendReqtQuery = `
+            SELECT user_id, display_name, bio, hobby_rating FROM users WHERE user_id IN (${friendReqtIds.join(',')})
+            `;  
+        const friendReqtResult = await pool.query(friendReqtQuery, []);
+
+        const groupRecQuery = `
+            SELECT group_id, group_name, group_description FROM groups WHERE group_id IN (${groupIds.join(',')})
+            `;
+        const groupRecResult = await pool.query(groupRecQuery, []);
+
+        // add similarity score to the result
+        const friendRecWithScore = friendRecResult.rows.map((row, index) => {
+            return {
+                ...row,
+                similarity_score: friendsResult.rows[index].similarity_score
+            };
+        });
+        const friendReqtWithScore = friendReqtResult.rows.map((row, index) => {
+            return {
+                ...row,
+                similarity_score: friendRequestResult.rows[index].similarity_score
+            };
+        });
+        const groupRecWithScore = groupRecResult.rows.map((row, index) => {
+            return {
+                ...row,
+                similarity_score: groupsResult.rows[index].similarity_score
+            };
+        });
+
+        // res.status(200).json({ FriendRecommendations: friendsResult.rows, FriendRequest: friendRequestResult.rows, GroupRecommendation: groupsResult.rows });
+        res.status(200).json({ FriendRecommendations: friendRecWithScore, FriendRequest: friendReqtWithScore, GroupRecommendation: groupRecWithScore });
     } catch (error) {
         console.error('Error fetching recommendations:', error);
         res.status(500).json({ error: 'Internal server error' });
