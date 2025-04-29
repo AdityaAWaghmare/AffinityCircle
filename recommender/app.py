@@ -21,12 +21,12 @@ def recommend_users():
         return jsonify({'error': 'User is required'}), 400
     try:
         user = int(user)
-        success = recommend.recommend_friends(connection_pool, user)
+        success, recommendations = recommend.recommend_friends(connection_pool, user)
         if success == 204:
             return jsonify({'message': 'No content to recommend'}), 204
         elif success == 500:
             return jsonify({'error': 'Error in recommendation process'}), 500
-        return jsonify({'message': 'Recommendation process completed successfully'}), 200
+        return jsonify({'message': 'Recommendation process completed successfully', 'recommendations': recommendations}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -38,12 +38,12 @@ def recommend_groups():
         return jsonify({'error': 'User is required'}), 400
     try:
         user = int(user)
-        success = recommend.recommend_groups(connection_pool, user)
+        success, recommendations = recommend.recommend_groups(connection_pool, user)
         if success == 204:
             return jsonify({'message': 'No content to recommend'}), 204
         elif success == 500:
             return jsonify({'error': 'Error in recommendation process'}), 500
-        return jsonify({'message': 'Recommendation process completed successfully'}), 200
+        return jsonify({'message': 'Recommendation process completed successfully', 'recommendations': recommendations}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

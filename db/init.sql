@@ -6,7 +6,6 @@ CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL, -- Email remains unique
     verified_name VARCHAR(255) NOT NULL, -- Name obtained from google auth
     display_name VARCHAR(255), -- Display name for the user
-    profile_pic INTEGER, -- Profile picture ID
     bio TEXT,
     hobby_rating INTEGER[5], -- Array of hobby ratings
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP -- Timestamp of account creation
@@ -190,10 +189,14 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+---------------------------------------------- Server functions --------------------------------------
+
+
+
 
 ----------------------------------------------- EXAMPLES -------------------------------------------------
 
-INSERT INTO users (email, verified_name, display_name, profile_pic, bio, hobby_rating)
+INSERT INTO users (email, verified_name, display_name, bio, hobby_rating)
 VALUES
 ('a@int.ac.in' , 'ico_A' , 'A' , 1 , 'bio_A' , '{4 , 5 , 7 , 3 , 1}'),
 ('b@int.ac.in' , 'ico_B' , 'B' , 2 , 'bio_B' , '{3 , 4 , 5 , 2 , 1}'),

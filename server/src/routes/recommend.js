@@ -1,92 +1,39 @@
 const router = require('express').Router();
 const axios = require('axios');
-const pool = require('./db/connection_pool');
+const pool = require('../db/connection_pool');
+const authUser = require('../auth/user'); // Import the authUser middleware
+const recommenderServiceUrl = process.env.RECOMMENDER_URL; // URL of the recommender service
 
-const recommenderServiceUrl = process.env.RECOMMENDER_URL;
+router.use(authUser); // Use the authUser middleware for all routes in this router
 
-// post request to get user recommendation
-router.post('/recommend_user', async (req, res, next) => { // Make the handler async
-    const { userId } = req.body;
-    if (!userId) {
-      return res.status(400).send('User ID is required');
-    }
-  
+// Route to get user recommendations
+router.post('/recommend_users', async (req, res) => {
+    const userId = req.user.customClaims.acuid; // Assuming authUser middleware attaches user info to req.user
     try {
-      console.log(`Forwarding recommendation request for userId: ${userId} to ${recommenderServiceUrl}`);
-      const response = await axios.post(recommenderServiceUrl,"recommend_users", {
-        user_id: userId // Adjust the key ('user_id') if the recommender expects something different
-      });
-      
-        if (response && response.data) {
-            const friendshipQuery = 'SELECT * FROM friendship_requests WHERE user_id = $1';
-            const result = await pool.query(friendshipQuery, [userId]);
-
-            console.log('Friendship requests:', result.rows);
-    
-            return res.status(200).json({
-            friendshipRequests: result.rows, // From database
-            });
+        const response = await axios.post(`${recommenderServiceUrl}/recommend_users`, { user: userId });
+        res.status(response.status).json(response.data);
+    } catch (error) {
+        if (error.response) {
+            res.status(error.response.status).json(error.response.data);
         } else {
-            throw new Error('No data received from recommendation service');
+            res.status(500).json({ error: 'Internal server error' });
         }
-    }
-    catch (error) {
-    console.error('Error calling recommendation service:', error.message);
-    if (error.response) {
-        console.error('Recommender service error status:', error.response.status);
-        console.error('Recommender service error data:', error.response.data);
-        res.status(error.response.status).json(error.response.data || { message: 'Error from recommendation service' });
-    } else if (error.request) {
-
-        console.error('No response received from recommender service:', error.request);
-        res.status(503).json({ message: 'Recommendation service unavailable' }); // Service Unavailable
-    } else {
-        console.error('Error setting up request to recommender service:', error.message);
-        res.status(500).json({ message: 'Internal server error communicating with recommendation service' });
-    }
     }
 });
 
-router.post('/recommend_groups', async (req, res, next) => { // Make the handler async
-    const { userId } = req.body;
-    if (!userId) {
-      return res.status(400).send('User ID is required');
-    }
-
+// Route to get group recommendations
+router.post('/recommend_groups', async (req, res) => {
+    const userId = req.user.customClaims.acuid; // Assuming authUser middleware attaches user info to req.user
     try {
-        console.log(`Forwarding recommendation request for userId: ${userId} to ${recommenderServiceUrl}`);
-        const response = await axios.post(recommenderServiceUrl,"recommend_groups", {
-            user_id: userId // Adjust the key ('user_id') if the recommender expects something different
-        });
-        
-        if (response && response.data) {
-                const groupquery = 'SELECT * FROM group_requests WHERE user_id = $1';
-                const result = await pool.query(groupquery, [userId]);
-                console.log('Group requests:', result.rows);
-
-                return res.status(200).json({
-                groupRequests: result.rows, // From database
-                });
+        const response = await axios.post(`${recommenderServiceUrl}/recommend_groups`, { user: userId });
+        res.status(response.status).json(response.data);
+    } catch (error) {
+        if (error.response) {
+            res.status(error.response.status).json(error.response.data);
         } else {
-                throw new Error('No data received from recommendation service');
+            res.status(500).json({ error: 'Internal server error' });
         }
-        }
-        catch (error) {
-            console.error('Error calling recommendation service:', error.message);
-            if (error.response) {
-                console.error('Recommender service error status:', error.response.status);
-                console.error('Recommender service error data:', error.response.data);
-                res.status(error.response.status).json(error.response.data || { message: 'Error from recommendation service' });
-            } else if (error.request) {
-        
-                console.error('No response received from recommender service:', error.request);
-                res.status(503).json({ message: 'Recommendation service unavailable' }); // Service Unavailable
-            } else {
-                console.error('Error setting up request to recommender service:', error.message);
-                res.status(500).json({ message: 'Internal server error communicating with recommendation service' });   
-            }
-        }
+    }
 });
 
-
-module.exports = router; // Ensure the router is exporte
+module.exports = router;
