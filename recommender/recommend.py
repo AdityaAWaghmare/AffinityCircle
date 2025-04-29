@@ -38,7 +38,7 @@ def recommend_friends(connection_pool, user_id):
     # Send recommendations to the database
     success = write_db.send_friend_recommendations_to_db(connection_pool, user_id, recommended_id_similarity_scores)
     
-    return (200 if success else 500), recommended_id_similarity_scores
+    return 200 if success else 500
 
 
 def recommend_groups(connection_pool, user_id):
@@ -71,7 +71,7 @@ def recommend_groups(connection_pool, user_id):
     # Send recommendations to the database
     success = write_db.send_group_recommendations_to_db(connection_pool, user_id, recommended_group_id_similarity_scores)
 
-    return (200 if success else 500), recommended_group_id_similarity_scores
+    return 200 if success else 500
 
 
 def create_new_group(connection_pool, group_name):

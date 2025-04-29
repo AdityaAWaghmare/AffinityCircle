@@ -7,12 +7,10 @@ const { query } = require('./db/connection_pool'); // Import the query function 
 // -------------------------------------------- Routes and Middleware --------------------------------------------
 
 // Import routes
-const verifyNewUser = require('./auth/newUser');
-const verifyUser = require('./auth/user');
-const newUserRoutes = require('./routes/newUser');
-const userRoutes = require('./routes/user');
-const recommendRoutes = require('./routes/recommend');
 const chatRoutes = require('./routes/chat');
+const createUserProfileRoute = require('./routes/createUserProfile');
+const recommendRoutes = require('./routes/recommend');
+const userRoutes = require('./routes/user');
 
 const app = express();
 const server = createServer(app);
@@ -30,10 +28,10 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use('/api/new-user', verifyNewUser, newUserRoutes);
-app.use('/api/user', verifyUser, userRoutes);
-app.use('/api/recommend', verifyUser, recommendRoutes);
-app.use('/api/chat', verifyUser, chatRoutes);
+app.use('/api/createUserProfile', createUserProfileRoute);
+app.use('/api/userPage', userRoutes);
+app.use('/api/recommendPage', recommendRoutes);
+app.use('/api/chatPage', chatRoutes);
 
 // -------------------------------------------------- Chat Logic --------------------------------------------------
 

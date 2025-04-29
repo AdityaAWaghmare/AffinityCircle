@@ -5,7 +5,7 @@ const { verifyNewUser, setCustomClaims } = require('../auth/newUser'); // Import
 router.use(verifyNewUser); // Use the authUser middleware for all routes in this router
 
 // Route to create a new user or profile
-router.post('/createUserProfile', async (req, res) => {
+router.post('/', async (req, res) => {
     const uid = req.user.uid;
     const email = req.user.email;
     const verified_name = req.user.name;

@@ -10,6 +10,4 @@ const pool = new Pool({
   min: process.env.DB_MAX_CONN,
 });
 
-module.exports = {
-  pool,
-};
+module.exports = pool;
