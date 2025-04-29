@@ -1,39 +1,58 @@
 const router = require('express').Router();
 const axios = require('axios');
 const pool = require('../db/connection_pool');
-const authUser = require('../auth/user'); // Import the authUser middleware
+const verifyUser = require('../auth/user'); // Import the authUser middleware
 const recommenderServiceUrl = process.env.RECOMMENDER_URL; // URL of the recommender service
 
-router.use(authUser); // Use the authUser middleware for all routes in this router
+router.use(verifyUser); // Use the authUser middleware for all routes in this router
 
-// Route to get user recommendations
-router.post('/recommend_users', async (req, res) => {
-    const userId = req.user.customClaims.acuid; // Assuming authUser middleware attaches user info to req.user
+// fetch friend request // fetch group request // fetct recommendation
+router.get('/FetchFriendFecommendations', async (req, res) => {
+    const acuid = req.user.customClaims.acuid;
     try {
-        const response = await axios.post(`${recommenderServiceUrl}/recommend_users`, { user: userId });
-        res.status(response.status).json(response.data);
+        const friendsQuery = `
+            SELECT receiver_id , similarity_score FROM friendship_request WHERE sender_id = $1 AND recommendation_status = 0
+        `;
+        const friendsResult = await pool.query(friendsQuery, [acuid]);
+        // Todo: if rec len 0, call recommender service to get new recommendations
+        res.status(200).json({ recommendations: friendsResult.rows });
     } catch (error) {
-        if (error.response) {
-            res.status(error.response.status).json(error.response.data);
-        } else {
-            res.status(500).json({ error: 'Internal server error' });
-        }
+        console.error('Error fetching friend recommendations:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
-});
+}
+);
 
-// Route to get group recommendations
-router.post('/recommend_groups', async (req, res) => {
-    const userId = req.user.customClaims.acuid; // Assuming authUser middleware attaches user info to req.user
+router.get('/FetchFriendFequest', async (req, res) => {
+    const acuid = req.user.customClaims.acuid;
     try {
-        const response = await axios.post(`${recommenderServiceUrl}/recommend_groups`, { user: userId });
-        res.status(response.status).json(response.data);
-    } catch (error) {
-        if (error.response) {
-            res.status(error.response.status).json(error.response.data);
-        } else {
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    }
-});
+        const friendRequestQuery = `
+            SELECT sender_id, similarity_score FROM friendship_request WHERE receiver_id = $1 AND recommendation_status = 1 AND status = 0
+        `;
+        const friendRequestResult = await pool.query(friendRequestQuery, [acuid]);
 
-module.exports = router;
+        res.status(200).json({ recommendations: friendRequestResult.rows });
+    } catch (error) {
+        console.error('Error fetching friend requests:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+);
+
+router.get('/FetchGroupRecommendation', async (req, res) => {
+    const acuid = req.user.customClaims.acuid;
+    try {
+        const groupsQuery = `
+            SELECT group_id, similarity_score FROM group_recommendation WHERE user_id = $1 AND recommendation_status = 0
+        `;
+        const groupsResult = await pool.query(groupsQuery, [acuid]);
+
+        // Todo: if rec len 0, call recommender service to get new recommendations
+
+        res.status(200).json({ recommendations: groupsResult.rows });
+    } catch (error) {
+        console.error('Error fetching group recommendations:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+);
