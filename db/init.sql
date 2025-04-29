@@ -72,6 +72,7 @@ CREATE TABLE group_message (
     message_id SERIAL PRIMARY KEY, -- Auto-incrementing unique ID
     group_id INTEGER NOT NULL REFERENCES groups(group_id), -- ID of the group
     sender_id INTEGER NOT NULL REFERENCES users(user_id), -- User who sent the message
+    sender_display_name VARCHAR(255) NOT NULL, -- Display name of the sender
     content TEXT NOT NULL, -- Content of the message
     sent_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP -- Timestamp of when the message was sent
 );

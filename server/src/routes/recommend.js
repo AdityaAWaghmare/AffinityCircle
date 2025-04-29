@@ -1,12 +1,8 @@
 const router = require('express').Router();
 const axios = require('axios');
-const { Pool } = require('pg');
+const pool = require('./db/connection_pool');
 
-const recommenderServiceUrl = process.env.RECOMMENDER_URL || 'http://localhost:8000/';
-
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL || 'postgres://ac:ac@db:5432/ac',
-  });
+const recommenderServiceUrl = process.env.RECOMMENDER_URL;
 
 // post request to get user recommendation
 router.post('/recommend_user', async (req, res, next) => { // Make the handler async

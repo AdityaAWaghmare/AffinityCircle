@@ -1,9 +1,6 @@
 const router = require('express').Router();
-const { Pool } = require('pg');
 
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL || 'postgres://ac:ac@db:5432/ac',
-});
+const pool = require('./db/connection_pool');
 
 
 // all routes 
