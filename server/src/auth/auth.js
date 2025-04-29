@@ -1,4 +1,3 @@
-// authMiddleware.js
 const admin = require('./firebase');
 
 async function verifyFirebaseToken(req, res, next) {

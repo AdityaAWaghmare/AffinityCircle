@@ -33,9 +33,9 @@ services:
       dockerfile: Dockerfile
     environment:
       - DB_HOST=db
-      - DB_NAME= ac
-      - DB_USER= ac
-      - DB_PASSWORD= ac
+      - DB_NAME=ac
+      - DB_USER=ac
+      - DB_PASSWORD=ac
       - MAX_FRIENDS_RECOMMENDATIONS=5
       - MAX_GROUPS_RECOMMENDATIONS=1
       - MAX_CLUSTERS=100
@@ -51,6 +51,11 @@ services:
       - "${SERVER_PORT}:5000"
     volumes:
       - ./server:/app
+    environment:
+      - DB_HOST=db
+      - DB_NAME=ac
+      - DB_USER=ac
+      - DB_PASSWORD=ac
     depends_on:
       db:
         condition: service_healthy
