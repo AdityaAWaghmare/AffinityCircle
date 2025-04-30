@@ -40,3 +40,5 @@ router.post('/saveProfile', async (req, res) => {
     }
 }
 );
+
+module.exports = router

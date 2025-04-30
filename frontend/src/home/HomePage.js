@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Chats from './Chats';
-import Settings from './Settings';
-import EditPreference from './EditPreference';
+import Chats from '../Chats';
+import Settings from '../Settings';
+import EditPreference from '../EditPreference';
 
 const HomePage = () => {
   const [currentScreen, setCurrentScreen] = useState('home');

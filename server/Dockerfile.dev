@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --production
 
-COPY dist ./dist
+COPY . .
 
 # Expose the port the app runs on
 EXPOSE 5000

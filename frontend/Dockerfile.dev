@@ -7,4 +7,6 @@ RUN npm install
 
 COPY . .
 
+ENV SERVER_URL=http://localhost:5000
+
 CMD ["npm", "start"]

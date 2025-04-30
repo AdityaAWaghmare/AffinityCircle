@@ -1,0 +1,50 @@
+.container {
+  height: 90vh;
+  width: 100vw;
+  padding: 0 5vw; /* reduced horizontal padding */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly; /* improved spacing */
+  align-items: center;
+  text-align: center;
+  font-size: 20px;
+  font-family: bold;
+  box-sizing: border-box;
+  overflow: hidden; /* prevents scroll */
+}
+
+.title {
+  font-family: cursive;
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+
+.button {
+  background-color: #D69000;
+  color: #333300;
+  border-radius: 20px;
+  padding: 16px 32px;
+  font-size: 16px;
+  border: none;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.dot {
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  background-color: #D0D0D0;
+}
+
+.dotActive {
+  background-color: #396CFF;
+}

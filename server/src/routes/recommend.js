@@ -302,3 +302,4 @@ router.post('/rejectGroupRecommendation', async (req, res) => {
 }
 );
 
+module.exports = router

@@ -1,0 +1,120 @@
+/* Onboarding.module.css */
+body{
+    overflow: auto;
+}
+.wrapper {
+    padding: 40px;
+    max-width: 700px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    overflow: scroll;
+  }
+  
+  .heading {
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 25px;
+    color: #007bff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    letter-spacing: 1.5px;
+    line-height: 1.2;
+  }
+  
+  .subtext {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 35px;
+    color: #555;
+  }
+  
+  .card {
+    margin-bottom: 35px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .categoryHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .categoryTitle {
+    font-size: 32px;
+    flex: 1;
+    cursor: pointer;
+    margin: 0;
+  }
+  
+  .categoryValue {
+    font-size: 22px;
+    margin-left: 10px;
+    flex-shrink: 0;
+    text-align: right;
+    margin: 0;
+  }
+  
+  .slider {
+    width: 100%;
+    margin-top: 15px;
+    height: 8px;
+    border-radius: 8px;
+    outline: none;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .button {
+    display: block;
+    margin: 30px auto 0;
+    padding: 15px 30px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .disabled {
+    color: grey;
+  }
+  
+  .enabled {
+    color: #333;
+  }
+
+  .inputGroup {
+    margin-bottom: 30px;
+  }
+  
+  .label {
+    display: block;
+    font-size: 20px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .inputField,
+  .textArea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    resize: none;
+  }
+  
+  .textArea {
+    height: 100px;
+  }
+  
