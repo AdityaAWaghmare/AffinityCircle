@@ -8,7 +8,7 @@ router.use(verifyUser); // Apply the auth middleware to all routes in this file
 // Todo: leaveGroup, unfriendUser
 
 router.get('/fetchFriendsAndGroups', async (req, res) => {
-    const acuid = req.user.customClaims.acuid; // Get the authenticated user's acuid from the token
+    const acuid = req.user.acuid; // Get the authenticated user's acuid from the token
     try {
         // Fetch friends
         const friendsQuery = `
@@ -71,7 +71,7 @@ router.get('/fetchFriendsAndGroups', async (req, res) => {
 );
 
 router.post('/leaveGroup', async (req, res) => {
-    const acuid = req.user.customClaims.acuid; // Get the authenticated user's acuid from the token
+    const acuid = req.user.acuid; // Get the authenticated user's acuid from the token
     const { group_id } = req.body; // Get the group ID from the request body
 
     try {
@@ -92,7 +92,7 @@ router.post('/leaveGroup', async (req, res) => {
 );
 
 router.post('/unfriendUser', async (req, res) => {
-    const acuid = req.user.customClaims.acuid; // Get the authenticated user's acuid from the token
+    const acuid = req.user.acuid; // Get the authenticated user's acuid from the token
     const { friend_id } = req.body; // Get the friend's ID from the request body
 
     try {

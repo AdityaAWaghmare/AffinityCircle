@@ -28,10 +28,10 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use('/api/createUserProfile', createUserProfileRoute);
-app.use('/api/userPage', userRoutes);
-app.use('/api/recommendPage', recommendRoutes);
-app.use('/api/chatPage', chatRoutes);
+app.use('/new', createUserProfileRoute);
+app.use('/user', userRoutes);
+app.use('/rs', recommendRoutes);
+app.use('/chat', chatRoutes);
 
 // -------------------------------------------------- Chat Logic --------------------------------------------------
 

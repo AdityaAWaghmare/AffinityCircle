@@ -18,7 +18,7 @@ async function verifyNewUser(req, res, next) {
     }
 
     // Check if the user has completed onboarding by checking if acuid is assigned
-    if (decodedToken.customClaims && decodedToken.customClaims.acuid) {
+    if (decodedToken.acuid) {
       return res.status(409).json({ error: 'User already onboarded' });
     }
 

@@ -1,146 +1,217 @@
-.container {
-    font-family: system-ui, sans-serif;
-    width: 90%;
-    margin: 0 auto;
-    padding: 30px;
-    padding-bottom: 70px; /* Ensure space for the fixed navbar */
-    background-color: #f9f9f9;
-    min-height: 100vh;
-    position: relative;
-    
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 36px;
-  }
-  
-  .greeting {
-    font-size: 30px;
-    margin: 0;
-    color: #1B1B1B;
-    font-weight: 700;
-  }
-  
-  .avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: #396CFF;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 26px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .diagonalAvatarBox {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    width: 70px;
-    height: 70px;
-    background: transparent;
-    color: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 30px;
-    border-radius: 12px;
-    transform: rotate(45deg);
-    box-shadow: none;
-  }
-  
-  .diagonalAvatarText {
-    transform: rotate(-45deg);
-  }
-  
-  .recommendations {
-    margin-bottom: 50px;
-  }
-  
-  .sectionTitle {
-    font-size: 34px;
-    margin-bottom: 24px;
-    color: #1B1B1B;
-    font-weight: 600;
-  }
-  
-  .userCard {
-    width: 90%;
-    height: 90px;
-    background: #fff;
-    border-radius: 12px;
-    padding: 12px;
-    margin-bottom: 14px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
-  }
-  
-  .userHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .username {
-    margin: 0;
-    font-size: 20px;
-    color: #333;
-    font-weight: 600;
-  }
-  
-  .matchPercentage {
-    background: #396CFF;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 24px;
-    font-size: 23px;
-    font-weight: 500;
-  }
-  
-  .userBio {
-    margin: 0;
-    color: #555;
-    font-size: 20px;
-    line-height: 1.5;
-  }
-  
-  .navBar {
-    position: fixed; /* Keeps the navbar fixed on the screen */
-    top: 0; /* Move it to the top of the screen */
-    left: 0;
-    right: 0;
-    width: 100%;
-    height: 50px;
-    background: #fff;
-    border-bottom: 1px solid #ddd; /* Adjusted for top navbar */
-    display: flex;
-    justify-content: space-around;
-    align-items: center; /* Ensures proper alignment of buttons */
-    padding: 0; /* Remove extra padding to avoid layout issues */
-    max-width: 500px;
-    margin: 0 auto;
-    z-index: 1000; /* Ensure it stays above other elements */
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05); /* Adjusted shadow for top */
-  }
-  
-  .navButton {
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-size: 28px;
-    color: #777;
-    font-weight: 600;
-  }
-  
-  .activeButton {
-    color: #396CFF;
-    border-bottom: 3px solid #396CFF;
-    padding-bottom: 4px;
-  }
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+  padding-bottom: 1000px; /* Space for the bottom navigation bar */
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.userIcon {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 16px;
+  color: white;
+}
+
+.userIcon img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.userIcon span {
+  font-weight: bold;
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.section {
+  margin: 20px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sectionTitle {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.cardContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.card {
+  flex: 1 1 calc(33.333% - 15px);
+  background-color: #f1f1f1;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #007bff;
+}
+
+.card p {
+  font-size: 14px;
+  margin-bottom: 15px;
+  color: #555;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.button {
+  padding: 8px;
+  width: 40px; /* Adjust width for icon buttons */
+  height: 40px; /* Adjust height for icon buttons */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%; /* Make buttons circular */
+  cursor: pointer;
+  font-size: 18px; /* Increase font size for icons */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+.navBar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0;
+  background-color: #007bff;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.navButton {
+  flex: 1;
+  padding: 10px;
+  color: white;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.navButton.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.navButton:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sliderGroup {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* Adds consistent spacing between label, slider, and value */
+  margin-bottom: 10px; /* Adds spacing between each slider group */
+}
+
+.sliderGroup label {
+  flex: 1; /* Ensures the label takes up equal space */
+  text-align: left; /* Aligns the label text to the left */
+  font-size: 14px; /* Adjust font size for better readability */
+  color: #333; /* Consistent text color */
+  min-width: 100px; /* Ensures labels have a consistent width */
+}
+
+.sliderGroup input[type="range"] {
+  flex: 3; /* Ensures the slider takes up more space */
+  appearance: none; /* Removes default browser styling */
+  height: 8px; /* Adjust slider height */
+  background: #ddd; /* Slider track color */
+  border-radius: 4px; /* Rounded edges for the slider track */
+  outline: none; /* Removes focus outline */
+}
+
+.sliderGroup input[type="range"]::-webkit-slider-thumb {
+  appearance: none; /* Removes default browser styling */
+  width: 16px; /* Thumb width */
+  height: 16px; /* Thumb height */
+  background: #007bff; /* Thumb color */
+  border-radius: 50%; /* Makes the thumb circular */
+  cursor: pointer; /* Changes cursor to pointer */
+}
+
+.sliderGroup span {
+  flex: 0.5; /* Ensures the value takes up minimal space */
+  text-align: center; /* Centers the value text */
+  font-size: 14px; /* Adjust font size */
+  color: #555; /* Consistent text color */
+  min-width: 40px; /* Ensures the value has a consistent width */
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: space-between;
+}

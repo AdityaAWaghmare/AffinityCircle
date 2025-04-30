@@ -1,111 +1,434 @@
-import React, { useState, useEffect } from 'react';
-import { getValidToken } from '../login/handleToken';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import styles from './HomePage.module.css';
 
-const HomePage = () => {
-  const navigate = useNavigate();
+const HomePage = ({ authToken }) => {
+    const [userData, setUserData] = useState(null);
+    const [recommendations, setRecommendations] = useState({
+        FriendRecommendations: [],
+        FriendRequest: [],
+        GroupRecommendation: []
+    });
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editableUserData, setEditableUserData] = useState({
+        display_name: '',
+        bio: '',
+        hobby_rating: [0, 0, 0, 0, 0]
+    });
 
-  // Check if the token is valid
-  const { authToken, acuid } = getValidToken();
-  if (!authToken) {
-    alert('Please login before proceeding.');
-    navigate('/login');
-  }
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/user/fetchProfile', {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${authToken}`
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setUserData(data);
+                } else {
+                    console.error('Failed to fetch user data');
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
 
-  if (!acuid) {
-    alert('Please finish onboarding first.');
-    navigate('/login');
-  }
+        const fetchRecommendations = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/rs/fetchRecommendations', {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${authToken}`
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setRecommendations(data);
+                } else {
+                    console.error('Failed to fetch recommendations');
+                }
+            } catch (error) {
+                console.error('Error fetching recommendations:', error);
+            }
+        };
 
-  const [friendRecommendations, setFriendRecommendations] = useState([]);
-  const [friendRequests, setFriendRequests] = useState([]);
-  const [groupRecommendations, setGroupRecommendations] = useState([]);
-  const [username, setUsername] = useState('');
+        fetchUserData();
+        fetchRecommendations();
+    }, [authToken]);
 
-  useEffect(() => {
-    const fetchRecommendations = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/recommendPage/FetchRecommendations', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+    const handleAcceptFriendRecommendation = async (receiverId) => {
+        try {
+            const response = await fetch('http://localhost:5000/rs/acceptFriendRecommendation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${authToken}`
+                },
+                body: JSON.stringify({ reciever_id: receiverId })
+            });
+            if (response.ok) {
+                setRecommendations((prev) => ({
+                    ...prev,
+                    FriendRecommendations: prev.FriendRecommendations.filter(user => user.user_id !== receiverId)
+                }));
+            } else {
+                console.error('Failed to accept friend recommendation');
+            }
+        } catch (error) {
+            console.error('Error accepting friend recommendation:', error);
         }
-        const data = await response.json();
-        console.log('here is the data', data);
-        const { FriendRecommendations, FriendRequest, GroupRecommendation } = data;
-
-        setFriendRecommendations(FriendRecommendations);
-        setFriendRequests(FriendRequest);
-        setGroupRecommendations(GroupRecommendation);
-        // setUsername(Username);
-      } catch (error) {
-        console.error('Error fetching recommendations:', error);
-        alert('Cannot reach the server. Please try again later.');
-      }
     };
 
-    fetchRecommendations();
-  }, []);
+    const handleRejectFriendRecommendation = async (receiverId) => {
+        try {
+            const response = await fetch('http://localhost:5000/rs/rejectFriendRecommendation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${authToken}`
+                },
+                body: JSON.stringify({ reciever_id: receiverId })
+            });
+            if (response.ok) {
+                setRecommendations((prev) => ({
+                    ...prev,
+                    FriendRecommendations: prev.FriendRecommendations.filter(user => user.user_id !== receiverId)
+                }));
+            } else {
+                console.error('Failed to reject friend recommendation');
+            }
+        } catch (error) {
+            console.error('Error rejecting friend recommendation:', error);
+        }
+    };
 
-  return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.greeting}>Welcome, {username}!</h1>
-      </div>
-      <div className={styles.recommendations}>
-        <h2 className={styles.sectionTitle}>Friend Recommendations</h2>
-        {friendRecommendations.map((user, index) => (
-          <div key={index} className={styles.userCard}>
-            <h3 className={styles.username}>{user.username}</h3>
-            <p className={styles.userBio}>{user.bio}</p>
-          </div>
-        ))}
-      </div>
-      <div className={styles.recommendations}>
-        <h2 className={styles.sectionTitle}>Friend Requests</h2>
-        {friendRequests.map((request, index) => (
-          <div key={index} className={styles.userCard}>
-            <h3 className={styles.username}>{request.username}</h3>
-            <p className={styles.userBio}>{request.bio}</p>
-          </div>
-        ))}
-      </div>
-      <div className={styles.recommendations}>
-        <h2 className={styles.sectionTitle}>Group Recommendations</h2>
-        {groupRecommendations.map((group, index) => (
-          <div key={index} className={styles.userCard}>
-            <h3 className={styles.username}>{group.groupName}</h3>
-            <p className={styles.userBio}>{group.description}</p>
-          </div>
-        ))}
-      </div>
-      <nav className={styles.navBar}>
-        <button
-          className={`${styles.navButton}`}
-          onClick={() => {
-            navigate('/');
-          }}
-        >
-          Home
-        </button>
-        <button
-          className={`${styles.navButton}`}
-          onClick={() => {
-            navigate('/chats');
-          }}
-        >
-          Chats
-        </button>
-      </nav>
-    </div>
-  );
+    const handleAcceptFriendRequest = async (senderId) => {
+        try {
+            const response = await fetch('http://localhost:5000/rs/acceptFriendRequest', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${authToken}`
+                },
+                body: JSON.stringify({ sender_id: senderId })
+            });
+            if (response.ok) {
+                setRecommendations((prev) => ({
+                    ...prev,
+                    FriendRequest: prev.FriendRequest.filter(request => request.user_id !== senderId)
+                }));
+            } else {
+                console.error('Failed to accept friend request');
+            }
+        } catch (error) {
+            console.error('Error accepting friend request:', error);
+        }
+    };
+
+    const handleRejectFriendRequest = async (senderId) => {
+        try {
+            const response = await fetch('http://localhost:5000/rs/rejectFriendRequest', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${authToken}`
+                },
+                body: JSON.stringify({ sender_id: senderId })
+            });
+            if (response.ok) {
+                setRecommendations((prev) => ({
+                    ...prev,
+                    FriendRequest: prev.FriendRequest.filter(request => request.user_id !== senderId)
+                }));
+            } else {
+                console.error('Failed to reject friend request');
+            }
+        } catch (error) {
+            console.error('Error rejecting friend request:', error);
+        }
+    };
+
+    const handleAcceptGroupRecommendation = async (groupId) => {
+        try {
+            const response = await fetch('http://localhost:5000/rs/acceptGroupRecommendation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${authToken}`
+                },
+                body: JSON.stringify({ group_id: groupId })
+            });
+            if (response.ok) {
+                setRecommendations((prev) => ({
+                    ...prev,
+                    GroupRecommendation: prev.GroupRecommendation.filter(group => group.group_id !== groupId)
+                }));
+            } else {
+                console.error('Failed to accept group recommendation');
+            }
+        } catch (error) {
+            console.error('Error accepting group recommendation:', error);
+        }
+    };
+
+    const handleRejectGroupRecommendation = async (groupId) => {
+        try {
+            const response = await fetch('http://localhost:5000/rs/rejectGroupRecommendation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${authToken}`
+                },
+                body: JSON.stringify({ group_id: groupId })
+            });
+            if (response.ok) {
+                setRecommendations((prev) => ({
+                    ...prev,
+                    GroupRecommendation: prev.GroupRecommendation.filter(group => group.group_id !== groupId)
+                }));
+            } else {
+                console.error('Failed to reject group recommendation');
+            }
+        } catch (error) {
+            console.error('Error rejecting group recommendation:', error);
+        }
+    };
+
+    const handleSaveDetails = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/user/saveProfile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${authToken}`
+                },
+                body: JSON.stringify({
+                    display_name: editableUserData.display_name,
+                    bio: editableUserData.bio,
+                    hobby_rating: editableUserData.hobby_rating
+                })
+            });
+            if (response.ok) {
+                setUserData((prev) => ({
+                    ...prev,
+                    display_name: editableUserData.display_name,
+                    bio: editableUserData.bio,
+                    hobby_rating: editableUserData.hobby_rating
+                }));
+                setIsModalOpen(false);
+                alert('Profile updated successfully!');
+            } else {
+                console.error('Failed to update profile');
+                alert('Failed to update profile. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            alert('An error occurred while updating your profile.');
+        }
+    };
+
+    const categories = [
+        "Fitness",
+        "Music",
+        "Study habits",
+        "Animal interest",
+        "Languages"
+    ];
+
+    return (
+        <div className={styles.wrapper}>
+            {/* Top Bar */}
+            <div className={styles.topBar}>
+                <h1 className={styles.title}>Home</h1>
+                <div
+                    className={styles.userIcon}
+                    onClick={() => {
+                        setEditableUserData({
+                            display_name: userData?.display_name || '',
+                            bio: userData?.bio || '',
+                            hobby_rating: userData?.hobby_rating || [0, 0, 0, 0, 0]
+                        });
+                        setIsModalOpen(true);
+                    }}
+                >
+                    {userData?.display_name}
+                </div>
+            </div>
+
+            {/* Modal for Editing User Details */}
+            {isModalOpen && (
+                <div className={styles.modal}>
+                    <div className={styles.modalContent}>
+                        <h2>Edit Profile</h2>
+
+                        {/* Non-editable fields */}
+                        <div className={styles.inputGroup}>
+                            <label>Email</label>
+                            <input
+                                type="text"
+                                value={userData?.email || ''}
+                                readOnly
+                                className={styles.readOnlyInput}
+                            />
+                        </div>
+                        <div className={styles.inputGroup}>
+                            <label>Verified Name</label>
+                            <input
+                                type="text"
+                                value={userData?.verified_name || ''}
+                                readOnly
+                                className={styles.readOnlyInput}
+                            />
+                        </div>
+
+                        {/* Editable fields */}
+                        <div className={styles.inputGroup}>
+                            <label>Display Name</label>
+                            <input
+                                type="text"
+                                value={editableUserData.display_name}
+                                onChange={(e) =>
+                                    setEditableUserData((prev) => ({
+                                        ...prev,
+                                        display_name: e.target.value
+                                    }))
+                                }
+                            />
+                        </div>
+                        <div className={styles.inputGroup}>
+                            <label>Bio</label>
+                            <textarea
+                                value={editableUserData.bio}
+                                onChange={(e) =>
+                                    setEditableUserData((prev) => ({
+                                        ...prev,
+                                        bio: e.target.value
+                                    }))
+                                }
+                            />
+                        </div>
+                        <div className={styles.inputGroup}>
+                            <label>Hobby Ratings</label>
+                            {editableUserData.hobby_rating.map((rating, index) => (
+                                <div key={index} className={styles.sliderGroup}>
+                                    <label>{categories[index]}</label> {/* Use category names */}
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="10"
+                                        value={rating}
+                                        onChange={(e) =>
+                                            setEditableUserData((prev) => {
+                                                const newRatings = [...prev.hobby_rating];
+                                                newRatings[index] = parseInt(e.target.value, 10);
+                                                return { ...prev, hobby_rating: newRatings };
+                                            })
+                                        }
+                                    />
+                                    <span>{rating}</span>
+                                </div>
+                            ))}
+                        </div>
+                        <div className={styles.buttonGroup}>
+                            <button onClick={handleSaveDetails}>Save</button>
+                            <button onClick={() => setIsModalOpen(false)}>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Recommendations Section */}
+            <div className={styles.section}>
+                <h2 className={styles.sectionTitle}>Friend Recommendations</h2>
+                <div className={styles.cardContainer}>
+                    {recommendations.FriendRecommendations.map((user, index) => (
+                        <div key={index} className={styles.card}>
+                            <h3>{user.display_name}</h3>
+                            <p>{user.bio}</p>
+                            <p>{user.similarity_score}</p>
+                            <div className={styles.buttonContainer}>
+                                <button
+                                    className={styles.button}
+                                    onClick={() => handleAcceptFriendRecommendation(user.user_id)}
+                                >
+                                    ✔
+                                </button>
+                                <button
+                                    className={styles.button}
+                                    onClick={() => handleRejectFriendRecommendation(user.user_id)}
+                                >
+                                    ✖
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className={styles.section}>
+                <h2 className={styles.sectionTitle}>Friend Requests</h2>
+                <div className={styles.cardContainer}>
+                    {recommendations.FriendRequest.map((request, index) => (
+                        <div key={index} className={styles.card}>
+                            <h3>{request.display_name}</h3>
+                            <p>{request.bio}</p>
+                            <p>{request.similarity_score}</p>
+                            <div className={styles.buttonContainer}>
+                                <button
+                                    className={styles.button}
+                                    onClick={() => handleAcceptFriendRequest(request.user_id)}
+                                >
+                                    ✔
+                                </button>
+                                <button
+                                    className={styles.button}
+                                    onClick={() => handleRejectFriendRequest(request.user_id)}
+                                >
+                                    ✖
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className={styles.section}>
+                <h2 className={styles.sectionTitle}>Group Recommendations</h2>
+                <div className={styles.cardContainer}>
+                    {recommendations.GroupRecommendation.map((group, index) => (
+                        <div key={index} className={styles.card}>
+                            <h3>{group.group_name}</h3>
+                            <p>{group.similarity_score}</p>
+                            <div className={styles.buttonContainer}>
+                                <button
+                                    className={styles.button}
+                                    onClick={() => handleAcceptGroupRecommendation(group.group_id)}
+                                >
+                                    ✔
+                                </button>
+                                <button
+                                    className={styles.button}
+                                    onClick={() => handleRejectGroupRecommendation(group.group_id)}
+                                >
+                                    ✖
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Bottom Navigation */}
+            <div className={styles.navBar}>
+                <button className={styles.navButton} onClick={() => alert('Chats clicked')}>
+                    Chats
+                </button>
+                <button className={`${styles.navButton} ${styles.active}`}>Home</button>
+            </div>
+        </div>
+    );
 };
 
 export default HomePage;

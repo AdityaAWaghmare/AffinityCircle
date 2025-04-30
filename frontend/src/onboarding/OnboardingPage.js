@@ -1,22 +1,7 @@
 import React, { useState } from 'react';
-import { getValidToken, refreshToken } from '../login/handleToken';
-import { useNavigate } from 'react-router-dom';
 import styles from './Onboarding.module.css';
 
-const OnboardingPage = () => {
-  const navigate = useNavigate();
-
-  // Check if the token is valid
-  const {authToken, acuid} = getValidToken();
-  React.useEffect(() => {
-    if (!authToken) {
-      alert('Session expired. Please log in again.');
-      navigate('/login');
-    }
-    if (acuid) {
-      navigate(`/home`);
-    }
-  }, [authToken, acuid, navigate]);
+const OnboardingPage = ({authToken}) => {
 
   const categories = [
     "Fitness",
@@ -46,7 +31,7 @@ const OnboardingPage = () => {
     };
 
     try {
-      const response = await fetch( 'http://localhost:5000/api/createUserProfile', {
+      const response = await fetch( 'http://localhost:5000/new/createUserProfile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,8 +43,7 @@ const OnboardingPage = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Submitted:', data);
-        refreshToken();
-        navigate('/home');
+        alert('Profile created successfully! Please log in again to access your profile.');
       } else {
         if (response.status === 403) {
           alert('Only campus emails are allowed. Please use your campus email to sign up.');

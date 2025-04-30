@@ -7,7 +7,7 @@ router.use(verifyUser); // Use the authUser middleware for all routes in this ro
 
 // Fetch own profile
 router.get('/fetchProfile', async (req, res) => {
-    const acuid = req.user.customClaims.acuid; // Get the acuid from the token
+    const acuid = req.user.acuid; // Get the acuid from the token
 
     try {
         const userProfile = await getFullProfile(acuid); // Fetch the user's full profile
@@ -20,7 +20,7 @@ router.get('/fetchProfile', async (req, res) => {
 
 // Save updated profile
 router.post('/saveProfile', async (req, res) => {
-    const acuid = req.user.customClaims.acuid;
+    const acuid = req.user.acuid;
     const { display_name, bio, hobby_rating } = req.body;
 
     try {

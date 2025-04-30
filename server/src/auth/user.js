@@ -13,7 +13,7 @@ async function verifyUser(req, res, next) {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
 
     // Check if the user has completed onboarding by checking if acuid is assigned
-    if (decodedToken.customClaims && !decodedToken.customClaims.acuid) {
+    if (!decodedToken.acuid) {
       return res.status(409).json({ error: 'User onboarding not complete' });
     }
 

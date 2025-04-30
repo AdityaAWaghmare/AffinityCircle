@@ -9,21 +9,20 @@ const recommenderServiceUrl = process.env.RECOMMENDER_URL; // URL of the recomme
 router.use(verifyUser); // Use the authUser middleware for all routes in this router
 
 // get all three types of recommendations
-router.get('/FetchRecommendations', async (req, res) => {
-    const acuid = req.user.customClaims.acuid;
+router.get('/fetchRecommendations', async (req, res) => {
+    const acuid = req.user.acuid;
     try {
         const friendsQuery = `
             SELECT receiver_id , similarity_score FROM friendship_request WHERE sender_id = $1 AND recommendation_status = 0
         `;
-        const friendsResult = await pool.query(friendsQuery, [acuid]);
+        let friendsResult = await pool.query(friendsQuery, [acuid]);
         // if no recommendations, call the recommender service
 
         if (friendsResult.rows.length === 0) {
-            await axios.get(`${recommenderServiceUrl}/recommend_users`, {
-                headers: {'Content-Type': 'application/json',},
-                data: {
-                    user: acuid,
-                },
+            await axios.post(`${recommenderServiceUrl}/recommend_users`, {
+                user: acuid,
+            }, {
+                headers: { 'Content-Type': 'application/json' },
             });
             friendsResult = await pool.query(friendsQuery, [acuid]);
         }
@@ -34,16 +33,15 @@ router.get('/FetchRecommendations', async (req, res) => {
         const friendRequestResult = await pool.query(friendRequestQuery, [acuid]);
 
         const groupsQuery = `
-            SELECT group_id, similarity_score FROM group_recommendation WHERE user_id = $1 AND recommendation_status = 0
+            SELECT group_id, similarity_score FROM group_recommendation WHERE user_id = $1 AND status = 0
         `;
-        const groupsResult = await pool.query(groupsQuery, [acuid]);
+        let groupsResult = await pool.query(groupsQuery, [acuid]);
         // if no recommendations, call the recommender service
         if (groupsResult.rows.length === 0) {
-            await axios.get(`${recommenderServiceUrl}/recommend_groups`, {
-                headers: {'Content-Type': 'application/json',},
-                data: {
-                    user: acuid,
-                },
+            await axios.post(`${recommenderServiceUrl}/recommend_groups`, {
+                user: acuid,
+            }, {
+                headers: { 'Content-Type': 'application/json' },
             });
             groupsResult = await pool.query(groupsQuery, [acuid]);
         }
@@ -54,20 +52,30 @@ router.get('/FetchRecommendations', async (req, res) => {
         const friendReqtIds = friendRequestResult.rows.map(row => row.sender_id);
         const groupIds = groupsResult.rows.map(row => row.group_id);
 
-        const friendRecQuery = `
-            SELECT user_id, display_name, bio, hobby_rating FROM users WHERE user_id IN (${friendRecIds.join(',')})
+        // get info of recommendations
+        let friendRecResult = { rows: [] };
+        if (friendRecIds.length > 0) {
+            const friendRecQuery = `
+                SELECT user_id, display_name, bio, hobby_rating FROM users WHERE user_id IN (${friendRecIds.join(',')})
             `;
-        const friendRecResult = await pool.query(friendRecQuery, []);
+            friendRecResult = await pool.query(friendRecQuery, []);
+        }
 
-        const friendReqtQuery = `
-            SELECT user_id, display_name, bio, hobby_rating FROM users WHERE user_id IN (${friendReqtIds.join(',')})
-            `;  
-        const friendReqtResult = await pool.query(friendReqtQuery, []);
-
-        const groupRecQuery = `
-            SELECT group_id, group_name, group_description FROM groups WHERE group_id IN (${groupIds.join(',')})
+        let friendReqtResult = { rows: [] };
+        if (friendReqtIds.length > 0) {
+            const friendReqtQuery = `
+                SELECT user_id, display_name, bio, hobby_rating FROM users WHERE user_id IN (${friendReqtIds.join(',')})
             `;
-        const groupRecResult = await pool.query(groupRecQuery, []);
+            friendReqtResult = await pool.query(friendReqtQuery, []);
+        }
+
+        let groupRecResult = { rows: [] };
+        if (groupIds.length > 0) {
+            const groupRecQuery = `
+                SELECT group_id, group_name FROM groups WHERE group_id IN (${groupIds.join(',')})
+            `;
+            groupRecResult = await pool.query(groupRecQuery, []);
+        }
 
         // add similarity score to the result
         const friendRecWithScore = friendRecResult.rows.map((row, index) => {
@@ -98,76 +106,8 @@ router.get('/FetchRecommendations', async (req, res) => {
 }
 );
 
-// // fetch friend request // fetch group request // fetct recommendation
-// router.get('/FetchFriendFecommendations', async (req, res) => {
-//     const acuid = req.user.customClaims.acuid;
-//     try {
-//         const friendsQuery = `
-//             SELECT receiver_id , similarity_score FROM friendship_request WHERE sender_id = $1 AND recommendation_status = 0
-//         `;
-//         const friendsResult = await pool.query(friendsQuery, [acuid]);
-//         // if no recommendations, call the recommender service
-//         if (friendsResult.rows.length === 0) {
-//             await axios.get(`${recommenderServiceUrl}/recommend_users`, {
-//                 headers: {'Content-Type': 'application/json',},
-//                 data: {
-//                     user: acuid,
-//                 },
-//             });
-//             friendsResult = await pool.query(friendsQuery, [acuid]);
-//         }
-
-//         res.status(200).json({ FriendRecommendations: friendsResult.rows });
-//     } catch (error) {
-//         console.error('Error fetching friend recommendations:', error);
-//         res.status(500).json({ error: 'Internal server error' });
-//     }
-// }
-// );
-
-// router.get('/FetchFriendRequest', async (req, res) => {
-//     const acuid = req.user.customClaims.acuid;
-//     try {
-//         const friendRequestQuery = `
-//             SELECT sender_id, similarity_score FROM friendship_request WHERE receiver_id = $1 AND recommendation_status = 1 AND status = 0
-//         `;
-//         const friendRequestResult = await pool.query(friendRequestQuery, [acuid]);
-//         res.status(200).json({ FriendRequest: friendRequestResult.rows });
-//     } catch (error) {
-//         console.error('Error fetching friend requests:', error);
-//         res.status(500).json({ error: 'Internal server error' });
-//     }
-// }
-// );
-
-// router.get('/FetchGroupRecommendation', async (req, res) => {
-//     const acuid = req.user.customClaims.acuid;
-//     try {
-//         const groupsQuery = `
-//             SELECT group_id, similarity_score FROM group_recommendation WHERE user_id = $1 AND status = 0
-//         `;
-//         const groupsResult = await pool.query(groupsQuery, [acuid]);
-//         // if no recommendations, call the recommender service
-//         if (groupsResult.rows.length === 0) {
-//             await axios.get(`${recommenderServiceUrl}/recommend_groups`, {
-//                 headers: {'Content-Type': 'application/json',},
-//                 data: {
-//                     user: acuid,
-//                 },
-//             });
-//             groupsResult = await pool.query(groupsQuery, [acuid]);
-//         }
-
-//         res.status(200).json({ GroupRecommendation: groupsResult.rows });
-//     } catch (error) {
-//         console.error('Error fetching group recommendations:', error);
-//         res.status(500).json({ error: 'Internal server error' });
-//     }
-// }
-// );
-
 router.post('/acceptFriendRecommendation', async (req, res) => {
-    const acuid = req.user.customClaims.acuid;
+    const acuid = req.user.acuid;
     const { reciever_id } = req.body; // reciever_id is the user who gets the friend request
     if (!reciever_id) return res.status(400).json({ error: 'reciever_id is required' });
     try {
@@ -187,7 +127,7 @@ router.post('/acceptFriendRecommendation', async (req, res) => {
 );
 
 router.post('/acceptFriendRequest', async (req, res) => {
-    const acuid = req.user.customClaims.acuid;
+    const acuid = req.user.acuid;
     const { sender_id } = req.body; // sender_id is the user who sent the friend request
     if (!sender_id) return res.status(400).json({ error: 'sender_id is required' });
     try {
@@ -216,7 +156,7 @@ router.post('/acceptFriendRequest', async (req, res) => {
 );
 
 router.post('/acceptGroupRecommendation', async (req, res) => {
-    const acuid = req.user.customClaims.acuid;
+    const acuid = req.user.acuid;
     const { group_id } = req.body;
     if (!group_id) return res.status(400).json({ error: 'group_id is required' });
     try {
@@ -243,7 +183,7 @@ router.post('/acceptGroupRecommendation', async (req, res) => {
 );
 
 router.post('/rejectFriendRecommendation', async (req, res) => {
-    const acuid = req.user.customClaims.acuid;
+    const acuid = req.user.acuid;
     const { reciever_id } = req.body; // sender_id is the user who sent the friend request
     if (!reciever_id) return res.status(400).json({ error: 'reciever_id is required' });
     try {
@@ -263,7 +203,7 @@ router.post('/rejectFriendRecommendation', async (req, res) => {
 );
 
 router.post('/rejectFriendRequest', async (req, res) => {
-    const acuid = req.user.customClaims.acuid;
+    const acuid = req.user.acuid;
     const { sender_id } = req.body; // sender_id is the user who sent the friend request
     if (!sender_id) return res.status(400).json({ error: 'sender_id is required' });
     try {
@@ -283,7 +223,7 @@ router.post('/rejectFriendRequest', async (req, res) => {
 );
 
 router.post('/rejectGroupRecommendation', async (req, res) => {
-    const acuid = req.user.customClaims.acuid;
+    const acuid = req.user.acuid;
     const { group_id } = req.body;
     if (!group_id) return res.status(400).json({ error: 'group_id is required' });
     try {
