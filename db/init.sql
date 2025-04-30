@@ -198,13 +198,13 @@ $$ LANGUAGE plpgsql;
 
 INSERT INTO users (email, verified_name, display_name, bio, hobby_rating)
 VALUES
-('a@int.ac.in' , 'ico_A' , 'A' , 1 , 'bio_A' , '{4 , 5 , 7 , 3 , 1}'),
-('b@int.ac.in' , 'ico_B' , 'B' , 2 , 'bio_B' , '{3 , 4 , 5 , 2 , 1}'),
-('c@int.ac.in' , 'ico_C' , 'C' , 3 , 'bio_C' , '{2 , 3 , 4 , 1 , 1}'),
-('d@int.ac.in' , 'ico_D' , 'D' , 4 , 'bio_D' , '{10 , 9 , 1 , 10 , 10}'),
-('e@int.ac.in' , 'ico_E' , 'E' , 5 , 'bio_E' , '{1 , 2 , 3 , 4 , 5}'),
-('f@int.ac.in' , 'ico_F' , 'F' , 6 , 'bio_F' , '{10 , 3 , 4 , 5 , 6}'),
-('g@int.ac.in' , 'ico_G' , 'G' , 7 , 'bio_G' , '{10 , 2 , 3 , 4 , 5}')
+('a@int.ac.in' , 'ico_A' , 'A' , 'bio_A' , '{4 , 5 , 7 , 3 , 1}'),
+('b@int.ac.in' , 'ico_B' , 'B' , 'bio_B' , '{3 , 4 , 5 , 2 , 1}'),
+('c@int.ac.in' , 'ico_C' , 'C' , 'bio_C' , '{2 , 3 , 4 , 1 , 1}'),
+('d@int.ac.in' , 'ico_D' , 'D' , 'bio_D' , '{10 , 9 , 1 , 10 , 10}'),
+('e@int.ac.in' , 'ico_E' , 'E' , 'bio_E' , '{1 , 2 , 3 , 4 , 5}'),
+('f@int.ac.in' , 'ico_F' , 'F' , 'bio_F' , '{10 , 3 , 4 , 5 , 6}'),
+('g@int.ac.in' , 'ico_G' , 'G' , 'bio_G' , '{10 , 2 , 3 , 4 , 5}')
 ;
 
 INSERT INTO groups (group_name, hobby_rating)

@@ -1,221 +1,111 @@
-import React, { useState } from 'react';
-import Chats from '../Chats';
-import Settings from '../Settings';
-import EditPreference from '../EditPreference';
+import React, { useState, useEffect } from 'react';
+import { getValidToken } from '../login/handleToken';
+import { useNavigate } from 'react-router-dom';
+import styles from './HomePage.module.css';
 
 const HomePage = () => {
-  const [currentScreen, setCurrentScreen] = useState('home');
+  const navigate = useNavigate();
 
-  const recommendedUsers = [
-    {
-      username: "CoolVenom.55",
-      match: "95",
-      bio: "Tech geek by day, adventurer by night. "
-    },
-    {
-      username: "GloomyBlue.3",
-      match: "95",
-      bio: "22, she/her. AI lover and gamer. "
-    },
-    {
-      username: "ShinyGray.77",
-      match: "95",
-      bio: "Fitness fan and coding enthusiast. Let's"
-    }
-  ];
+  // Check if the token is valid
+  const { authToken, acuid } = getValidToken();
+  if (!authToken) {
+    alert('Please login before proceeding.');
+    navigate('/login');
+  }
 
-  const renderContent = () => {
-    switch (currentScreen) {
-      case 'home':
-        return (
-          <>
-            <div style={styles.header}>
-              <h1 style={styles.greeting}>What's good?</h1>
-              <div style={styles.avatar}>ME</div>
-            </div>
-            <div style={styles.recommendations}>
-              <h2 style={styles.sectionTitle}>Recommended for you</h2>
-              {recommendedUsers.map((user, index) => (
-                <div key={index} style={styles.userCard}>
-                  <div style={styles.userHeader}>
-                    <h3 style={styles.username}>{user.username}</h3>
-                    <span style={styles.matchPercentage}>{user.match}</span>
-                  </div>
-                  <p style={styles.userBio}>{user.bio}</p>
-                </div>
-              ))}
-            </div>
-          </>
-        );
-      case 'chats':
-        return <Chats />;
-      case 'settings':
-        return <Settings />;
-      case 'EditP':
-        return <EditPreference />
-      default:
-        return null;
-    }
-  };
+  if (!acuid) {
+    alert('Please finish onboarding first.');
+    navigate('/login');
+  }
+
+  const [friendRecommendations, setFriendRecommendations] = useState([]);
+  const [friendRequests, setFriendRequests] = useState([]);
+  const [groupRecommendations, setGroupRecommendations] = useState([]);
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/recommendPage/FetchRecommendations', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('here is the data', data);
+        const { FriendRecommendations, FriendRequest, GroupRecommendation } = data;
+
+        setFriendRecommendations(FriendRecommendations);
+        setFriendRequests(FriendRequest);
+        setGroupRecommendations(GroupRecommendation);
+        // setUsername(Username);
+      } catch (error) {
+        console.error('Error fetching recommendations:', error);
+        alert('Cannot reach the server. Please try again later.');
+      }
+    };
+
+    fetchRecommendations();
+  }, []);
 
   return (
-    <div style={styles.container}>
-      {renderContent()}
-      <nav style={styles.navBar}>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.greeting}>Welcome, {username}!</h1>
+      </div>
+      <div className={styles.recommendations}>
+        <h2 className={styles.sectionTitle}>Friend Recommendations</h2>
+        {friendRecommendations.map((user, index) => (
+          <div key={index} className={styles.userCard}>
+            <h3 className={styles.username}>{user.username}</h3>
+            <p className={styles.userBio}>{user.bio}</p>
+          </div>
+        ))}
+      </div>
+      <div className={styles.recommendations}>
+        <h2 className={styles.sectionTitle}>Friend Requests</h2>
+        {friendRequests.map((request, index) => (
+          <div key={index} className={styles.userCard}>
+            <h3 className={styles.username}>{request.username}</h3>
+            <p className={styles.userBio}>{request.bio}</p>
+          </div>
+        ))}
+      </div>
+      <div className={styles.recommendations}>
+        <h2 className={styles.sectionTitle}>Group Recommendations</h2>
+        {groupRecommendations.map((group, index) => (
+          <div key={index} className={styles.userCard}>
+            <h3 className={styles.username}>{group.groupName}</h3>
+            <p className={styles.userBio}>{group.description}</p>
+          </div>
+        ))}
+      </div>
+      <nav className={styles.navBar}>
         <button
-          style={{ ...styles.navButton, ...(currentScreen === 'home' ? styles.activeButton : {}) }}
-          onClick={() => setCurrentScreen('home')}
+          className={`${styles.navButton}`}
+          onClick={() => {
+            navigate('/');
+          }}
         >
           Home
         </button>
         <button
-          style={{ ...styles.navButton, ...(currentScreen === 'chats' ? styles.activeButton : {}) }}
-          onClick={() => setCurrentScreen('chats')}
+          className={`${styles.navButton}`}
+          onClick={() => {
+            navigate('/chats');
+          }}
         >
           Chats
-        </button>
-        <button
-          style={{ ...styles.navButton, ...(currentScreen === 'settings' ? styles.activeButton : {}) }}
-          onClick={() => setCurrentScreen('settings')}
-        >
-          Settings
         </button>
       </nav>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    fontFamily: 'system-ui, sans-serif',
-    width: '95%',
-    margin: '0 auto',
-    padding: 30,
-    paddingBottom: 120,
-    backgroundColor: '#f9f9f9',
-    minHeight: '100vh',
-    position: 'relative',
-    paddingBottom: '70px', // Ensure space for the fixed navbar
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 36,
-  },
-  greeting: {
-    fontSize: 40,
-    margin: 0,
-    color: '#1B1B1B',
-    fontWeight: 700,
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: '50%',
-    background: '#396CFF',
-    color: 'white',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontWeight: 'bold',
-    fontSize: 26,
-    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-  },
-  diagonalAvatarBox: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    width: 70,
-    height: 70,
-    background: 'transparent',
-    color: 'transparent',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontWeight: 'bold',
-    fontSize: 30,
-    borderRadius: '12px',
-    transform: 'rotate(45deg)',
-    boxShadow: 'none',
-  },
-  diagonalAvatarText: {
-    transform: 'rotate(-45deg)',
-  },
-  recommendations: {
-    marginBottom: 50,
-  },
-  sectionTitle: {
-    fontSize: 34,
-    marginBottom: 24,
-    color: '#1B1B1B',
-    fontWeight: 600,
-  },
-  userCard: {
-    width: '90%',
-    height: '90px',
-    background: '#fff',
-    borderRadius: 12,
-    padding: '12px 12px',
-    marginBottom: 14,
-    boxShadow: '0 4px 10px rgba(0,0,0,0.06)',
-  },
-  userHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  username: {
-    margin: 0,
-    fontSize: 28,
-    color: '#333',
-    fontWeight: 600,
-  },
-  matchPercentage: {
-    background: '#396CFF',
-    color: 'white',
-    padding: '6px 12px',
-    borderRadius: 24,
-    fontSize: 23,
-    fontWeight: 500,
-  },
-  userBio: {
-    margin: 0,
-    color: '#555',
-    fontSize: 25,
-    lineHeight: 1.5,
-  },
-  navBar: {
-    position: 'fixed',
-    bottom: 0,
-    width: '100%',
-    height: 50, // Increased height for larger size
-    left: 0,
-    right: 0,
-    background: '#fff',
-    borderTop: '1px solid #ddd',
-    display: 'flex',
-    justifyContent: 'space-around',
-    padding: '20px 0', // Increased padding for larger size
-    maxWidth: 500,
-    margin: '0 auto',
-    zIndex: 999,
-    boxShadow: '0 -3px 12px rgba(0,0,0,0.05)',
-  },
-  navButton: {
-    border: 'none',
-    background: 'none',
-    cursor: 'pointer',
-    fontSize: 28, // Increased font size for better visibility
-    color: '#777',
-    fontWeight: 600,
-  },
-  activeButton: {
-    color: '#396CFF',
-    borderBottom: '3px solid #396CFF',
-    paddingBottom: 4,
-  }
 };
 
 export default HomePage;

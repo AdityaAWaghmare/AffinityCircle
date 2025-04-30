@@ -9,9 +9,9 @@ const App = () => {
   return (
     <Router>
       <Routes>
+        <Route path="/home" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/onboarding" element={<IntroPage />} />
-        <Route path="/home" element={<HomePage />} />
         <Route path="*" element={<HomePage />} /> {/* Redirect to LoginPage for any other route */}
       </Routes>
     </Router>

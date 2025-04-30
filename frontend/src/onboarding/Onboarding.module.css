@@ -14,7 +14,7 @@ body{
   }
   
   .heading {
-    font-size: 32px;
+    font-size: 24px;
     font-weight: bold;
     text-align: center;
     margin-bottom: 25px;
@@ -46,7 +46,7 @@ body{
   }
   
   .categoryTitle {
-    font-size: 32px;
+    font-size: 20px;
     flex: 1;
     cursor: pointer;
     margin: 0;
@@ -105,7 +105,7 @@ body{
   
   .inputField,
   .textArea {
-    width: 100%;
+    width: 92%;
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: 8px;

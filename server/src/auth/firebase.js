@@ -1,5 +1,5 @@
 const admin = require('firebase-admin');
-const serviceAccount = require('../../affinity-circle-firebase-adminsdk-fbsvc-78a65fee55.json'); // downloaded key
+const serviceAccount = require('../../globe-920d8-firebase-adminsdk-o27d5-a3671dc82b.json'); // downloaded key
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),

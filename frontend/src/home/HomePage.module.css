@@ -1,0 +1,146 @@
+.container {
+    font-family: system-ui, sans-serif;
+    width: 90%;
+    margin: 0 auto;
+    padding: 30px;
+    padding-bottom: 70px; /* Ensure space for the fixed navbar */
+    background-color: #f9f9f9;
+    min-height: 100vh;
+    position: relative;
+    
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 36px;
+  }
+  
+  .greeting {
+    font-size: 30px;
+    margin: 0;
+    color: #1B1B1B;
+    font-weight: 700;
+  }
+  
+  .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #396CFF;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 26px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .diagonalAvatarBox {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 70px;
+    height: 70px;
+    background: transparent;
+    color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 30px;
+    border-radius: 12px;
+    transform: rotate(45deg);
+    box-shadow: none;
+  }
+  
+  .diagonalAvatarText {
+    transform: rotate(-45deg);
+  }
+  
+  .recommendations {
+    margin-bottom: 50px;
+  }
+  
+  .sectionTitle {
+    font-size: 34px;
+    margin-bottom: 24px;
+    color: #1B1B1B;
+    font-weight: 600;
+  }
+  
+  .userCard {
+    width: 90%;
+    height: 90px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  }
+  
+  .userHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .username {
+    margin: 0;
+    font-size: 20px;
+    color: #333;
+    font-weight: 600;
+  }
+  
+  .matchPercentage {
+    background: #396CFF;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 24px;
+    font-size: 23px;
+    font-weight: 500;
+  }
+  
+  .userBio {
+    margin: 0;
+    color: #555;
+    font-size: 20px;
+    line-height: 1.5;
+  }
+  
+  .navBar {
+    position: fixed; /* Keeps the navbar fixed on the screen */
+    top: 0; /* Move it to the top of the screen */
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 50px;
+    background: #fff;
+    border-bottom: 1px solid #ddd; /* Adjusted for top navbar */
+    display: flex;
+    justify-content: space-around;
+    align-items: center; /* Ensures proper alignment of buttons */
+    padding: 0; /* Remove extra padding to avoid layout issues */
+    max-width: 500px;
+    margin: 0 auto;
+    z-index: 1000; /* Ensure it stays above other elements */
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05); /* Adjusted shadow for top */
+  }
+  
+  .navButton {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 28px;
+    color: #777;
+    font-weight: 600;
+  }
+  
+  .activeButton {
+    color: #396CFF;
+    border-bottom: 3px solid #396CFF;
+    padding-bottom: 4px;
+  }

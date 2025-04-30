@@ -3,13 +3,14 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCycQfXiPtYqT79h7F4BAZPSdi2FOQ5vGI",
-    authDomain: "affinity-circle.firebaseapp.com",
-    projectId: "affinity-circle",
-    storageBucket: "affinity-circle.firebasestorage.app",
-    messagingSenderId: "294621730161",
-    appId: "1:294621730161:web:185010337394f2fc3892d0",
-    measurementId: "G-49XQDJ7FBT"
+    apiKey: "AIzaSyAhZX94c2zRdmMb4uHJYIk9ruXPZRUCMbQ",
+    authDomain: "globe-920d8.firebaseapp.com",
+    databaseURL: "https://globe-920d8-default-rtdb.firebaseio.com",
+    projectId: "globe-920d8",
+    storageBucket: "globe-920d8.firebasestorage.app",
+    messagingSenderId: "797845774239",
+    appId: "1:797845774239:web:11926c3141a51b61a227aa",
+    measurementId: "G-CL28S4Y6WJ"
 };
 
 const app = initializeApp(firebaseConfig);

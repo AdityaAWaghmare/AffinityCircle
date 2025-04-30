@@ -46,7 +46,7 @@ const OnboardingPage = () => {
     };
 
     try {
-      const response = await fetch( process.env.SERVER_URL + '/api/createUserProfile', {
+      const response = await fetch( 'http://localhost:5000/api/createUserProfile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
