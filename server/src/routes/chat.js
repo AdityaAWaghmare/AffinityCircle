@@ -19,13 +19,13 @@ router.get('/fetchFriendsAndGroups', async (req, res) => {
             ELSE f.user1_id 
             END AS friend_id,
             CASE 
-            WHEN f.user1_id = $1 THEN f.user1_reveal_status 
-            ELSE f.user2_reveal_status 
-            END AS user_reveal_status,
+            WHEN f.user1_id = $1 THEN f.user1_identity_reveal_status 
+            ELSE f.user2_identity_reveal_status 
+            END AS user_identity_reveal_status,
             CASE 
-            WHEN f.user1_id = $1 THEN f.user2_reveal_status 
-            ELSE f.user1_reveal_status 
-            END AS friend_reveal_status
+            WHEN f.user1_id = $1 THEN f.user2_identity_reveal_status 
+            ELSE f.user1_identity_reveal_status 
+            END AS friend_identity_reveal_status
             FROM friendship f
             WHERE 
             (f.user1_id = $1 OR f.user2_id = $1) 
@@ -113,5 +113,84 @@ router.post('/unfriendUser', async (req, res) => {
     }
 }
 );
+
+// route to fetch old messages in friendship conversation
+router.post('/friend/fetchMessages', async (req, res) => {
+    const acuid = req.user.acuid; // Get the authenticated user's acuid from the token
+    const { conversation_id, n_last, last_message_id } = req.body; // Get the conversation ID and number of messages to fetch from the request body
+    try {
+        // Verify if the user is part of the conversation
+        const verifyQuery = `
+            SELECT 1
+            FROM friendship
+            WHERE friendship_id = $1 AND (user1_id = $2 OR user2_id = $2)
+        `;
+        const verifyResult = await pool.query(verifyQuery, [conversation_id, acuid]);
+
+        if (verifyResult.rowCount === 0) {
+            return res.status(403).json({ error: 'You are not part of this conversation' });
+        }
+
+        // Fetch old messages from the friendship_message table
+        const messagesQuery = `
+            SELECT 
+            fm.message_id, 
+            fm.sender_id, 
+            fm.content, 
+            fm.sent_at
+            FROM friendship_message fm
+            WHERE fm.conversation_id = $1 AND fm.message_id < $2
+            ORDER BY fm.timestamp DESC
+            LIMIT $3
+        `;
+        const messages = await pool.query(messagesQuery, [conversation_id, last_message_id, n_last]);
+
+        res.json(messages.rows);
+    } catch (error) {
+        console.error('Error fetching old messages:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// route to fetch old messages in group conversation
+router.post('/group/fetchMessages', async (req, res) => {
+    const acuid = req.user.acuid; // Get the authenticated user's acuid from the token
+    const { group_id, n_last, last_message_id } = req.body; // Get the group ID and number of messages to fetch from the request body
+    try {
+        // Verify if the user is part of the group
+        const verifyQuery = `
+            SELECT 1
+            FROM group_membership
+            WHERE group_id = $1 AND user_id = $2 AND status = 0
+        `;
+        const verifyResult = await pool.query(verifyQuery, [group_id, acuid]);
+
+        if (verifyResult.rowCount === 0) {
+            return res.status(403).json({ error: 'You are not part of this group' });
+        }
+
+        // Fetch old messages from the group_message table
+        const messagesQuery = `
+            SELECT 
+            gm.message_id, 
+            gm.sender_id, 
+            gm.sender_display_name,
+            gm.content, 
+            gm.sent_at
+            FROM group_message gm
+            WHERE gm.group_id = $1 AND gm.message_id < $2
+            ORDER BY gm.timestamp DESC
+            LIMIT $3
+        `;
+        const messages = await pool.query(messagesQuery, [group_id, last_message_id, n_last]);
+
+        res.json(messages.rows);
+    } catch (error) {
+        console.error('Error fetching old messages:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+);
+
 
 module.exports = router

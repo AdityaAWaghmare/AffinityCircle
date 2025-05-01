@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import styles from './HomePage.module.css';
 
-const HomePage = ({ authToken }) => {
+const HomePage = ({ authToken, setCurrentSection }) => {
+
     const [userData, setUserData] = useState(null);
     const [recommendations, setRecommendations] = useState({
         FriendRecommendations: [],
@@ -238,7 +239,7 @@ const HomePage = ({ authToken }) => {
     ];
 
     return (
-        <div className={styles.wrapper}>
+        <>
             {/* Top Bar */}
             <div className={styles.topBar}>
                 <h1 className={styles.title}>Home</h1>
@@ -347,7 +348,7 @@ const HomePage = ({ authToken }) => {
                         <div key={index} className={styles.card}>
                             <h3>{user.display_name}</h3>
                             <p>{user.bio}</p>
-                            <p>{user.similarity_score}</p>
+                            <p>{user.similarity_score*100}%</p>
                             <div className={styles.buttonContainer}>
                                 <button
                                     className={styles.button}
@@ -374,7 +375,7 @@ const HomePage = ({ authToken }) => {
                         <div key={index} className={styles.card}>
                             <h3>{request.display_name}</h3>
                             <p>{request.bio}</p>
-                            <p>{request.similarity_score}</p>
+                            <p>{request.similarity_score*100}%</p>
                             <div className={styles.buttonContainer}>
                                 <button
                                     className={styles.button}
@@ -400,7 +401,7 @@ const HomePage = ({ authToken }) => {
                     {recommendations.GroupRecommendation.map((group, index) => (
                         <div key={index} className={styles.card}>
                             <h3>{group.group_name}</h3>
-                            <p>{group.similarity_score}</p>
+                            <p>{group.similarity_score*100}%</p>
                             <div className={styles.buttonContainer}>
                                 <button
                                     className={styles.button}
@@ -419,15 +420,7 @@ const HomePage = ({ authToken }) => {
                     ))}
                 </div>
             </div>
-
-            {/* Bottom Navigation */}
-            <div className={styles.navBar}>
-                <button className={styles.navButton} onClick={() => alert('Chats clicked')}>
-                    Chats
-                </button>
-                <button className={`${styles.navButton} ${styles.active}`}>Home</button>
-            </div>
-        </div>
+        </>
     );
 };
 

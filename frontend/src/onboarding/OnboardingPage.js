@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from './Onboarding.module.css';
 
-const OnboardingPage = ({authToken}) => {
+const OnboardingPage = ({authToken, setCurrentPage}) => {
 
   const categories = [
     "Fitness",
@@ -44,9 +44,11 @@ const OnboardingPage = ({authToken}) => {
         const data = await response.json();
         console.log('Submitted:', data);
         alert('Profile created successfully! Please log in again to access your profile.');
+        setCurrentPage('login'); // Redirect to login page
       } else {
         if (response.status === 403) {
           alert('Only campus emails are allowed. Please use your campus email to sign up.');
+          setCurrentPage('login'); // Redirect to login page
         }
         else {
           alert('Failed to submit. Please try again.');

@@ -1,0 +1,78 @@
+/* Chat Header */
+.chatHeader {
+    display: flex;
+    justify-content: space-between; /* Space between name and close button */
+    align-items: center; /* Align items vertically */
+    padding: 10px 20px;
+    background: #0078d4;
+    color: white;
+    position: fixed; /* Fix the header at the top */
+    top: 0; /* Align to the top */
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 10; /* Ensure it stays above other elements */
+    box-sizing: border-box; /* Include padding and border in the width */
+    height: 60px; /* Set a fixed height for the header */
+}
+
+.chatTitle {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    outline: none;
+}
+
+/* Adjust chat body to account for fixed header */
+.chatBody {
+    flex: 1;
+    padding: 80px 20px 70px; /* Leave space for the fixed header and footer */
+    overflow-y: auto;
+    background: #ffffff;
+    margin-top: 60px; /* Add margin to prevent overlap with the fixed header */
+}
+
+/* Chat Footer */
+.chatFooter {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background: #f1f1f1;
+    border-top: 1px solid #ddd;
+    position: fixed; /* Fix the footer at the bottom of the chat window */
+    bottom: 60px; /* Leave space for the navigation bar */
+    width: 100%;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box; /* Include padding and border in the width */
+}
+
+.messageInput {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 1rem;
+    outline: none;
+    margin-right: 10px;
+}
+
+.sendButton {
+    background: #0078d4;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.sendButton:hover {
+    background: #005bb5;
+}

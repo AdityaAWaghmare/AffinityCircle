@@ -1,13 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { auth, provider, signInWithPopup } from '../firebase'; // Import from firebase.js
 import style from './LoginPage.module.css'; // adjust path as needed
 import '../global.css'; // Import global CSS
-import HomePage from '../home/HomePage'; // Import HomePage component
-import IntroPage from '../onboarding/IntroPage'; // Import OnboardingPage component
 
-const LoginPage = () => {
-    const [authToken, setAuthToken] = useState(null);
-    const [currentPage, setCurrentPage] = useState('login'); // Track the current page
+const LoginPage = ( { setAuthToken, setCurrentPage } ) => {
 
     const handleGoogleSignIn = async () => {
         try {
@@ -28,15 +24,7 @@ const LoginPage = () => {
             console.error('Error during Google Sign-In:', error);
         }
     };
-
-    if (currentPage === 'home') {
-        return <HomePage authToken={authToken} />; // Pass the auth token to HomePage
-    }
-
-    if (currentPage === 'onboarding') {
-        return <IntroPage authToken={authToken} />; // Pass the auth token to OnboardingPage
-    }
-
+    
     return (
         <div className={style.pagecontainer}>
             <div>

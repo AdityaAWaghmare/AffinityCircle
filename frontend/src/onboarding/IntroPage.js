@@ -21,7 +21,7 @@ const screens = [
   }
 ];
 
-const IntroPage = ({ authToken }) => {
+const IntroPage = ({ authToken, setCurrentPage }) => {
   const [index, setIndex] = useState(0);
 
   const next = () => {
@@ -60,7 +60,7 @@ const IntroPage = ({ authToken }) => {
         </div>
       </div>
     ) : (
-      < OnboardingPage authToken={authToken} /> // Pass the auth token to OnboardingPage
+      < OnboardingPage authToken={authToken} setCurrentPage={setCurrentPage} />
     )
   );
 };
