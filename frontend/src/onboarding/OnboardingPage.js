@@ -31,7 +31,7 @@ const OnboardingPage = ({authToken, setCurrentPage}) => {
     };
 
     try {
-      const response = await fetch( 'http://localhost:5000/new/createUserProfile', {
+      const response = await fetch( process.env.REACT_APP_API_URL + '/api/new/createUserProfile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -40,20 +40,23 @@ const OnboardingPage = ({authToken, setCurrentPage}) => {
         body: JSON.stringify(payload)
       });
 
+      const data = await response.json();
       if (response.ok) {
-        const data = await response.json();
         console.log('Submitted:', data);
         alert('Profile created successfully! Please log in again to access your profile.');
         setCurrentPage('login'); // Redirect to login page
-      } else {
-        if (response.status === 403) {
-          alert('Only campus emails are allowed. Please use your campus email to sign up.');
-          setCurrentPage('login'); // Redirect to login page
-        }
-        else {
-          alert('Failed to submit. Please try again.');
-        }
+      } else if (response.status === 401 || response.status === 403) {
+        alert(data.error);
+        setCurrentPage('login'); // Redirect to login page
       }
+      else if (response.status === 409) {
+        alert(data.error);
+        setCurrentPage('home'); // Redirect to login page
+      }
+      else {
+        alert(data.error);
+      }
+      
     } catch (error) {
       console.error('Submission error:', error);
       alert('An error occurred.');

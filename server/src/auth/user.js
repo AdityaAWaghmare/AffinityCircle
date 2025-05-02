@@ -4,7 +4,7 @@ async function verifyUser(req, res, next) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Missing or invalid token' });
+    return res.status(401).json({ error: 'Missing or invalid authentication token' });
   }
 
   const idToken = authHeader.split('Bearer ')[1];
@@ -21,6 +21,11 @@ async function verifyUser(req, res, next) {
     next();
   } catch (error) {
     console.error('Token verification failed:', error);
+
+    if (error.code === 'auth/id-token-expired') {
+      return res.status(401).json({ error: 'Token expired. Please re-authenticate.' });
+    }
+    
     return res.status(401).json({ error: 'Unauthorized' });
   }
 }

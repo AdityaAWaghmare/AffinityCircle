@@ -114,10 +114,10 @@ router.post('/unfriendUser', async (req, res) => {
 }
 );
 
-// route to fetch old messages in friendship conversation
+// route to fetch messages in friendship conversation within a time range
 router.post('/friend/fetchMessages', async (req, res) => {
     const acuid = req.user.acuid; // Get the authenticated user's acuid from the token
-    const { conversation_id, n_last, last_message_id } = req.body; // Get the conversation ID and number of messages to fetch from the request body
+    const { conversation_id, from_time, to_time } = req.body; // Get the conversation ID and time range from the request body
     try {
         // Verify if the user is part of the conversation
         const verifyQuery = `
@@ -131,31 +131,31 @@ router.post('/friend/fetchMessages', async (req, res) => {
             return res.status(403).json({ error: 'You are not part of this conversation' });
         }
 
-        // Fetch old messages from the friendship_message table
+        // Fetch messages from the friendship_message table within the time range
         const messagesQuery = `
             SELECT 
-            fm.message_id, 
             fm.sender_id, 
             fm.content, 
             fm.sent_at
             FROM friendship_message fm
-            WHERE fm.conversation_id = $1 AND fm.message_id < $2
-            ORDER BY fm.timestamp DESC
-            LIMIT $3
+            WHERE fm.conversation_id = $1 
+            AND fm.sent_at >= $2 
+            AND fm.sent_at <= $3
+            ORDER BY fm.sent_at ASC
         `;
-        const messages = await pool.query(messagesQuery, [conversation_id, last_message_id, n_last]);
+        const messages = await pool.query(messagesQuery, [conversation_id, from_time, to_time]);
 
         res.json(messages.rows);
     } catch (error) {
-        console.error('Error fetching old messages:', error);
+        console.error('Error fetching messages:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
-// route to fetch old messages in group conversation
+// route to fetch messages in group conversation within a time range
 router.post('/group/fetchMessages', async (req, res) => {
     const acuid = req.user.acuid; // Get the authenticated user's acuid from the token
-    const { group_id, n_last, last_message_id } = req.body; // Get the group ID and number of messages to fetch from the request body
+    const { group_id, from_time, to_time } = req.body; // Get the group ID and time range from the request body
     try {
         // Verify if the user is part of the group
         const verifyQuery = `
@@ -169,28 +169,27 @@ router.post('/group/fetchMessages', async (req, res) => {
             return res.status(403).json({ error: 'You are not part of this group' });
         }
 
-        // Fetch old messages from the group_message table
+        // Fetch messages from the group_message table within the time range
         const messagesQuery = `
             SELECT 
-            gm.message_id, 
             gm.sender_id, 
             gm.sender_display_name,
             gm.content, 
             gm.sent_at
             FROM group_message gm
-            WHERE gm.group_id = $1 AND gm.message_id < $2
-            ORDER BY gm.timestamp DESC
-            LIMIT $3
+            WHERE gm.group_id = $1 
+            AND gm.sent_at >= $2 
+            AND gm.sent_at <= $3
+            ORDER BY gm.sent_at ASC
         `;
-        const messages = await pool.query(messagesQuery, [group_id, last_message_id, n_last]);
+        const messages = await pool.query(messagesQuery, [group_id, from_time, to_time]);
 
         res.json(messages.rows);
     } catch (error) {
-        console.error('Error fetching old messages:', error);
+        console.error('Error fetching messages:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-}
-);
+});
 
 
 module.exports = router

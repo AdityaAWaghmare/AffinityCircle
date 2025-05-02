@@ -26,6 +26,11 @@ async function verifyNewUser(req, res, next) {
     next();
   } catch (error) {
     console.error('Token verification failed:', error);
+
+    if (error.code === 'auth/id-token-expired') {
+      return res.status(401).json({ error: 'Token expired. Please re-authenticate.' });
+    }
+    
     return res.status(401).json({ error: 'Unauthorized' });
   }
 }

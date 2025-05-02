@@ -29,13 +29,14 @@
     outline: none;
 }
 
-/* Adjust chat body to account for fixed header */
+/* Adjust chat body to account for fixed header and footer */
 .chatBody {
     flex: 1;
-    padding: 80px 20px 70px; /* Leave space for the fixed header and footer */
+    padding: 80px 20px 120px; /* Increased bottom padding to 120px */
     overflow-y: auto;
     background: #ffffff;
-    margin-top: 60px; /* Add margin to prevent overlap with the fixed header */
+    margin-top: 60px; /* Prevent overlap with the fixed header */
+    box-sizing: border-box; /* Include padding in height calculation */
 }
 
 /* Chat Footer */
@@ -75,4 +76,99 @@
 
 .sendButton:hover {
     background: #005bb5;
+}
+
+/* Message Container */
+.messageContainer {
+    display: flex;
+    margin: 10px 0;
+}
+
+/* Sent Messages */
+.sent {
+    justify-content: flex-end;
+}
+
+/* Received Messages */
+.received {
+    justify-content: flex-start;
+}
+
+/* Message Bubble */
+.messageBubble {
+    max-width: 60%;
+    padding: 10px 15px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    position: relative;
+    word-wrap: break-word;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Sent Message Bubble */
+.sent .messageBubble {
+    background: #dcf8c6; /* WhatsApp green for sent messages */
+    color: #000;
+    border-top-right-radius: 0;
+}
+
+/* Received Message Bubble */
+.received .messageBubble {
+    background: #fff;
+    color: #000;
+    border-top-left-radius: 0;
+    border: 1px solid #ddd;
+}
+
+/* Message Header */
+.messageHeader {
+    display: flex;
+    justify-content: flex-start; /* Align sender name to the top left */
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+/* Message Content */
+.messageContent {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* Message Footer */
+.messageFooter {
+    display: flex;
+    justify-content: flex-end; /* Align timestamp to the bottom right */
+    font-size: 0.75rem;
+    color: #555;
+    margin-top: 5px;
+}
+
+/* Message Metadata */
+.messageMeta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #555;
+    margin-top: 5px;
+}
+
+.messageSender {
+    font-weight: bold;
+}
+
+.messageTimestamp {
+    font-style: italic;
+}
+
+/* Message Sender */
+.messageSender {
+    display: block;
+    font-size: 0.75rem;
+    color: #555;
+    margin-top: 5px;
+    text-align: right;
 }

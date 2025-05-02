@@ -2,7 +2,6 @@ const router = require('express').Router();
 const axios = require('axios');
 const pool = require('../db/connection_pool');
 const verifyUser = require('../auth/user'); // Import the authUser middleware
-const { getAnonProfile } = require('./commonfn'); // Import the common functions
 
 const recommenderServiceUrl = process.env.RECOMMENDER_URL; // URL of the recommender service
 

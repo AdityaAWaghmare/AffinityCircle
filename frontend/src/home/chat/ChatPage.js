@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styles from './ChatPage.module.css';
-import ChatWindow from './ChatWindow';
+import FriendChatWindow from './FriendChatWindow';
+import GroupChatWindow from './GroupChatWindow';
 
-const ChatPage = ({ authToken }) => {
+const ChatPage = ({ authToken, setCurrentPage, userData }) => {
     const [friends, setFriends] = useState([]);
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -11,18 +12,23 @@ const ChatPage = ({ authToken }) => {
     useEffect(() => {
         const fetchFriendsAndGroups = async () => {
             try {
-                const response = await fetch('http://localhost:5000/chat/fetchFriendsAndGroups', {
+                const response = await fetch(process.env.REACT_APP_API_URL + '/api/chat/fetchFriendsAndGroups', {
                     method: 'GET',
                     headers: {
                         Authorization: `Bearer ${authToken}`
                     }
                 });
+                const data = await response.json();
                 if (response.ok) {
-                    const data = await response.json();
                     setFriends(data.friends);
                     setGroups(data.groups);
-                } else {
-                    console.error('Failed to fetch friends and groups');
+                }
+                else if (response.status === 401 || response.status === 409) {
+                    alert(data.error);
+                    setCurrentPage('login');
+                }
+                else {
+                    alert(data.error);
                 }
             } catch (error) {
                 console.error('Error fetching friends and groups:', error);
@@ -32,11 +38,11 @@ const ChatPage = ({ authToken }) => {
         };
 
         fetchFriendsAndGroups();
-    }, [authToken]);
+    }, [authToken, setCurrentPage]);
 
     const handleUnfriend = async (friendId) => {
         try {
-            const response = await fetch('http://localhost:5000/chat/unfriendUser', {
+            const response = await fetch(process.env.REACT_APP_API_URL + '/api/chat/unfriendUser', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -44,11 +50,17 @@ const ChatPage = ({ authToken }) => {
                 },
                 body: JSON.stringify({ friend_id: friendId })
             });
+            const data = await response.json();
             if (response.ok) {
                 setFriends(friends.filter(friend => friend.friend_id !== friendId));
                 alert('Successfully unfriended the user');
-            } else {
-                console.error('Failed to unfriend user');
+            }
+            else if (response.status === 401 || response.status === 409) {
+                alert(data.error);
+                setCurrentPage('login');
+            }
+            else {
+                alert(data.error);
             }
         } catch (error) {
             console.error('Error unfriending user:', error);
@@ -57,7 +69,7 @@ const ChatPage = ({ authToken }) => {
 
     const handleLeaveGroup = async (groupId) => {
         try {
-            const response = await fetch('http://localhost:5000/chat/leaveGroup', {
+            const response = await fetch(process.env.REACT_APP_API_URL + '/api/chat/leaveGroup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -65,11 +77,17 @@ const ChatPage = ({ authToken }) => {
                 },
                 body: JSON.stringify({ group_id: groupId })
             });
+            const data = await response.json();
             if (response.ok) {
                 setGroups(groups.filter(group => group.group_id !== groupId));
                 alert('Successfully left the group');
-            } else {
-                console.error('Failed to leave group');
+            }
+            else if (response.status === 401 || response.status === 409) {
+                alert(data.error);
+                setCurrentPage('login');
+            }
+            else {
+                alert(data.error);
             }
         } catch (error) {
             console.error('Error leaving group:', error);
@@ -82,12 +100,28 @@ const ChatPage = ({ authToken }) => {
 
     // If an active chat is selected, render the ChatWindow
     if (activeChat) {
-        return (
-            <ChatWindow
-                name={activeChat.name}
-                onClose={() => setActiveChat(null)} // Close the chat window
-            />
-        );
+        if (activeChat.friendship) {
+            return (
+                <FriendChatWindow
+                    authToken={authToken}
+                    setCurrentPage={setCurrentPage}
+                    userData={userData}
+                    friendship={activeChat.friendship}
+                    onClose={() => setActiveChat(null)} // Close the chat window
+                />
+            );
+        }
+        else {
+            return (
+                <GroupChatWindow
+                    authToken={authToken}
+                    setCurrentPage={setCurrentPage}
+                    userData={userData}
+                    group={activeChat.group}
+                    onClose={() => setActiveChat(null)} // Close the chat window
+                />
+            );
+        }
     }
 
     // Render the main chat list (friends and groups)
@@ -104,8 +138,8 @@ const ChatPage = ({ authToken }) => {
                 <div className={styles.listContainer}>
                     {friends.map((friend, index) => (
                         <div key={index} className={styles.listItem}>
-                            <span onClick={() => setActiveChat({ name: friend.profile.display_name })}>
-                                {friend.profile.display_name}
+                            <span onClick={() => setActiveChat({ friendship:friend })}>
+                            {friend.profile.display_name} {friend.profile.verified_name && `(${friend.profile.verified_name})`}
                             </span>
                             <button
                                 className={styles.actionButton}
@@ -124,7 +158,7 @@ const ChatPage = ({ authToken }) => {
                 <div className={styles.listContainer}>
                     {groups.map((group, index) => (
                         <div key={index} className={styles.listItem}>
-                            <span onClick={() => setActiveChat({ name: group.group_name })}>
+                            <span onClick={() => setActiveChat({ group:group })}>
                                 {group.group_name}
                             </span>
                             <button

@@ -4,6 +4,7 @@ const cors = require('cors');
 const { Server } = require('socket.io');
 const admin = require('./auth/firebase');
 const pool = require('./db/connection_pool');
+const path = require('path');
 
 
 // -------------------------------------------- Routes and Middleware --------------------------------------------
@@ -26,11 +27,21 @@ const PORT = process.env.PORT;
 app.use(cors());
 app.use(express.json());
 
+// Serve static files from the build folder
+const buildPath = path.join(__dirname, '../build'); // Adjust the path if needed
+app.use(express.static(buildPath));
+console.log('Serving static files from:', buildPath);
+
+// // Catch-all route to serve the frontend's index.html for unknown routes
+// app.get('*', (req, res) => {
+//     res.sendFile(path.join(buildPath, 'index.html'));
+// });
+
 // Routes
-app.use('/new', createUserProfileRoute);
-app.use('/user', userRoutes);
-app.use('/rs', recommendRoutes);
-app.use('/chat', chatRoutes);
+app.use('/api/new', createUserProfileRoute);
+app.use('/api/user', userRoutes);
+app.use('/api/rs', recommendRoutes);
+app.use('/api/chat', chatRoutes);
 
 
 //-------------------------------------------- Socket.IO Setup --------------------------------------------
@@ -53,11 +64,11 @@ io.on('connection', (socket) => {
     console.log(`User connected: ${userId}`);
 
     // Join friendship room
-    socket.on('join_friend_chat', async ({ conversationId }) => {
-        const room = `F${conversationId}`;
+    socket.on('join_friend_chat', async ({ conversation_id }) => {
+        const room = `F${conversation_id}`;
         const result = await pool.query(
         'SELECT 1 FROM friendship WHERE friendship_id = $1 AND (user1_id = $2 OR user2_id = $2)',
-        [conversationId, userId]
+        [conversation_id, userId]
         );
         if (result.rowCount > 0) {
         socket.join(room);
@@ -65,11 +76,11 @@ io.on('connection', (socket) => {
     });
 
     // Join group room
-    socket.on('join_group_chat', async ({ groupId }) => {
-        const room = `G${groupId}`;
+    socket.on('join_group_chat', async ({ group_id }) => {
+        const room = `G${group_id}`;
         const result = await pool.query(
         'SELECT 1 FROM group_membership WHERE group_id = $1 AND user_id = $2',
-        [groupId, userId]
+        [group_id, userId]
         );
         if (result.rowCount > 0) {
         socket.join(room);
@@ -77,33 +88,31 @@ io.on('connection', (socket) => {
     });
 
     // Friend message
-    socket.on('send_friend_message', async ({ conversationId, content }) => {
-        const room = `F${conversationId}`;
+    socket.on('send_friend_message', async ({ conversation_id, content }) => {
+        const room = `F${conversation_id}`;
         await pool.query(
         'INSERT INTO friendship_message (conversation_id, sender_id, content) VALUES ($1, $2, $3)',
-        [conversationId, userId, content]
+        [conversation_id, userId, content]
         );
         io.to(room).emit('receive_friend_message', {
-        senderId: userId,
-        conversationId,
-        content,
-        sentAt: new Date(),
+        sender_id: userId,
+        content:content,
+        sent_at: new Date(),
         });
     });
 
     // Group message
-    socket.on('send_group_message', async ({ groupId, content, displayName }) => {
-        const room = `G${groupId}`;
+    socket.on('send_group_message', async ({ group_id, content, sender_display_name }) => {
+        const room = `G${group_id}`;
         await pool.query(
         'INSERT INTO group_message (group_id, sender_id, sender_display_name, content) VALUES ($1, $2, $3, $4)',
-        [groupId, userId, displayName, content]
+        [group_id, userId, sender_display_name, content]
         );
         io.to(room).emit('receive_group_message', {
-        senderId: userId,
-        groupId,
-        displayName,
-        content,
-        sentAt: new Date(),
+        sender_id: userId,
+        sender_display_name:sender_display_name,
+        content:content,
+        sent_at: new Date(),
         });
     });
 
@@ -114,6 +123,6 @@ io.on('connection', (socket) => {
 
 // -------------------------------------------------------------------------------------------------------------
 // Start the server
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
 });

@@ -47,7 +47,7 @@ services:
       context: ./server
       dockerfile: Dockerfile.dev
     ports:
-      - "5000:5000"
+      - "0.0.0.0:5000:5000" # Bind to all network interfaces
     environment:
       - DB_HOST=db
       - DB_NAME=ac

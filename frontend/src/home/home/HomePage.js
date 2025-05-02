@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import styles from './HomePage.module.css';
+import { signOut, auth } from '../../firebase'; // Import signOut and auth
 
-const HomePage = ({ authToken, setCurrentSection }) => {
-
-    const [userData, setUserData] = useState(null);
+const HomePage = ({ authToken, setCurrentPage, userData, setUserData }) => {
     const [recommendations, setRecommendations] = useState({
         FriendRecommendations: [],
         FriendRequest: [],
@@ -19,17 +18,23 @@ const HomePage = ({ authToken, setCurrentSection }) => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await fetch('http://localhost:5000/user/fetchProfile', {
+                const response = await fetch(process.env.REACT_APP_API_URL + '/api/user/fetchProfile', {
                     method: 'GET',
                     headers: {
                         Authorization: `Bearer ${authToken}`
                     }
                 });
+
+                const data = await response.json();
                 if (response.ok) {
-                    const data = await response.json();
                     setUserData(data);
-                } else {
-                    console.error('Failed to fetch user data');
+                } 
+                else if (response.status === 401 || response.status === 409) {
+                    alert(data.error);
+                    setCurrentPage('login');
+                }
+                else {
+                    alert(data.error);
                 }
             } catch (error) {
                 console.error('Error fetching user data:', error);
@@ -38,17 +43,22 @@ const HomePage = ({ authToken, setCurrentSection }) => {
 
         const fetchRecommendations = async () => {
             try {
-                const response = await fetch('http://localhost:5000/rs/fetchRecommendations', {
+                const response = await fetch(process.env.REACT_APP_API_URL + '/api/rs/fetchRecommendations', {
                     method: 'GET',
                     headers: {
                         Authorization: `Bearer ${authToken}`
                     }
                 });
+                const data = await response.json();
                 if (response.ok) {
-                    const data = await response.json();
                     setRecommendations(data);
-                } else {
-                    console.error('Failed to fetch recommendations');
+                }
+                else if (response.status === 401 || response.status === 409) {
+                    alert(data.error);
+                    setCurrentPage('login');
+                }
+                else {
+                    alert(data.error);
                 }
             } catch (error) {
                 console.error('Error fetching recommendations:', error);
@@ -57,11 +67,11 @@ const HomePage = ({ authToken, setCurrentSection }) => {
 
         fetchUserData();
         fetchRecommendations();
-    }, [authToken]);
+    }, [authToken, setCurrentPage, setUserData]);
 
     const handleAcceptFriendRecommendation = async (receiverId) => {
         try {
-            const response = await fetch('http://localhost:5000/rs/acceptFriendRecommendation', {
+            const response = await fetch(process.env.REACT_APP_API_URL + '/api/rs/acceptFriendRecommendation', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -69,14 +79,21 @@ const HomePage = ({ authToken, setCurrentSection }) => {
                 },
                 body: JSON.stringify({ reciever_id: receiverId })
             });
+            const data = await response.json();
             if (response.ok) {
                 setRecommendations((prev) => ({
                     ...prev,
                     FriendRecommendations: prev.FriendRecommendations.filter(user => user.user_id !== receiverId)
                 }));
-            } else {
-                console.error('Failed to accept friend recommendation');
             }
+            else if (response.status === 401 || response.status === 409) {
+                alert(data.error);
+                setCurrentPage('login');
+            }
+            else {
+                alert(data.error);
+            }
+
         } catch (error) {
             console.error('Error accepting friend recommendation:', error);
         }
@@ -84,7 +101,7 @@ const HomePage = ({ authToken, setCurrentSection }) => {
 
     const handleRejectFriendRecommendation = async (receiverId) => {
         try {
-            const response = await fetch('http://localhost:5000/rs/rejectFriendRecommendation', {
+            const response = await fetch(process.env.REACT_APP_API_URL + '/api/rs/rejectFriendRecommendation', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -92,13 +109,19 @@ const HomePage = ({ authToken, setCurrentSection }) => {
                 },
                 body: JSON.stringify({ reciever_id: receiverId })
             });
+            const data = await response.json();
             if (response.ok) {
                 setRecommendations((prev) => ({
                     ...prev,
                     FriendRecommendations: prev.FriendRecommendations.filter(user => user.user_id !== receiverId)
                 }));
-            } else {
-                console.error('Failed to reject friend recommendation');
+            }
+            else if (response.status === 401 || response.status === 409) {
+                alert(data.error);
+                setCurrentPage('login');
+            }
+            else {
+                alert(data.error);
             }
         } catch (error) {
             console.error('Error rejecting friend recommendation:', error);
@@ -107,7 +130,7 @@ const HomePage = ({ authToken, setCurrentSection }) => {
 
     const handleAcceptFriendRequest = async (senderId) => {
         try {
-            const response = await fetch('http://localhost:5000/rs/acceptFriendRequest', {
+            const response = await fetch(process.env.REACT_APP_API_URL + '/api/rs/acceptFriendRequest', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -115,13 +138,19 @@ const HomePage = ({ authToken, setCurrentSection }) => {
                 },
                 body: JSON.stringify({ sender_id: senderId })
             });
+            const data = await response.json();
             if (response.ok) {
                 setRecommendations((prev) => ({
                     ...prev,
                     FriendRequest: prev.FriendRequest.filter(request => request.user_id !== senderId)
                 }));
-            } else {
-                console.error('Failed to accept friend request');
+            }
+            else if (response.status === 401 || response.status === 409) {
+                alert(data.error);
+                setCurrentPage('login');
+            }
+            else {
+                alert(data.error);
             }
         } catch (error) {
             console.error('Error accepting friend request:', error);
@@ -130,7 +159,7 @@ const HomePage = ({ authToken, setCurrentSection }) => {
 
     const handleRejectFriendRequest = async (senderId) => {
         try {
-            const response = await fetch('http://localhost:5000/rs/rejectFriendRequest', {
+            const response = await fetch(process.env.REACT_APP_API_URL + '/api/rs/rejectFriendRequest', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -138,13 +167,19 @@ const HomePage = ({ authToken, setCurrentSection }) => {
                 },
                 body: JSON.stringify({ sender_id: senderId })
             });
+            const data = await response.json();
             if (response.ok) {
                 setRecommendations((prev) => ({
                     ...prev,
                     FriendRequest: prev.FriendRequest.filter(request => request.user_id !== senderId)
                 }));
-            } else {
-                console.error('Failed to reject friend request');
+            }
+            else if (response.status === 401 || response.status === 409) {
+                alert(data.error);
+                setCurrentPage('login');
+            }
+            else {
+                alert(data.error);
             }
         } catch (error) {
             console.error('Error rejecting friend request:', error);
@@ -153,7 +188,7 @@ const HomePage = ({ authToken, setCurrentSection }) => {
 
     const handleAcceptGroupRecommendation = async (groupId) => {
         try {
-            const response = await fetch('http://localhost:5000/rs/acceptGroupRecommendation', {
+            const response = await fetch(process.env.REACT_APP_API_URL + '/api/rs/acceptGroupRecommendation', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -161,13 +196,19 @@ const HomePage = ({ authToken, setCurrentSection }) => {
                 },
                 body: JSON.stringify({ group_id: groupId })
             });
+            const data = await response.json();
             if (response.ok) {
                 setRecommendations((prev) => ({
                     ...prev,
                     GroupRecommendation: prev.GroupRecommendation.filter(group => group.group_id !== groupId)
                 }));
-            } else {
-                console.error('Failed to accept group recommendation');
+            }
+            else if (response.status === 401 || response.status === 409) {
+                alert(data.error);
+                setCurrentPage('login');
+            }
+            else {
+                alert(data.error);
             }
         } catch (error) {
             console.error('Error accepting group recommendation:', error);
@@ -176,7 +217,7 @@ const HomePage = ({ authToken, setCurrentSection }) => {
 
     const handleRejectGroupRecommendation = async (groupId) => {
         try {
-            const response = await fetch('http://localhost:5000/rs/rejectGroupRecommendation', {
+            const response = await fetch(process.env.REACT_APP_API_URL + '/api/rs/rejectGroupRecommendation', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -184,13 +225,19 @@ const HomePage = ({ authToken, setCurrentSection }) => {
                 },
                 body: JSON.stringify({ group_id: groupId })
             });
+            const data = await response.json();
             if (response.ok) {
                 setRecommendations((prev) => ({
                     ...prev,
                     GroupRecommendation: prev.GroupRecommendation.filter(group => group.group_id !== groupId)
                 }));
-            } else {
-                console.error('Failed to reject group recommendation');
+            }
+            else if (response.status === 401 || response.status === 409) {
+                alert(data.error);
+                setCurrentPage('login');
+            }
+            else {
+                alert(data.error);
             }
         } catch (error) {
             console.error('Error rejecting group recommendation:', error);
@@ -199,7 +246,7 @@ const HomePage = ({ authToken, setCurrentSection }) => {
 
     const handleSaveDetails = async () => {
         try {
-            const response = await fetch('http://localhost:5000/user/saveProfile', {
+            const response = await fetch(process.env.REACT_APP_API_URL + '/api/user/saveProfile', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -211,6 +258,7 @@ const HomePage = ({ authToken, setCurrentSection }) => {
                     hobby_rating: editableUserData.hobby_rating
                 })
             });
+            const data = await response.json();
             if (response.ok) {
                 setUserData((prev) => ({
                     ...prev,
@@ -220,9 +268,13 @@ const HomePage = ({ authToken, setCurrentSection }) => {
                 }));
                 setIsModalOpen(false);
                 alert('Profile updated successfully!');
-            } else {
-                console.error('Failed to update profile');
-                alert('Failed to update profile. Please try again.');
+            }
+            else if (response.status === 401 || response.status === 409) {
+                alert(data.error);
+                setCurrentPage('login');
+            }
+            else {
+                alert(data.error);
             }
         } catch (error) {
             console.error('Error updating profile:', error);
@@ -262,6 +314,14 @@ const HomePage = ({ authToken, setCurrentSection }) => {
             {isModalOpen && (
                 <div className={styles.modal}>
                     <div className={styles.modalContent}>
+                        {/* Close Icon */}
+                        <span
+                            className={styles.closeIcon}
+                            onClick={() => setIsModalOpen(false)}
+                        >
+                            &times;
+                        </span>
+
                         <h2>Edit Profile</h2>
 
                         {/* Non-editable fields */}
@@ -334,7 +394,22 @@ const HomePage = ({ authToken, setCurrentSection }) => {
                         </div>
                         <div className={styles.buttonGroup}>
                             <button onClick={handleSaveDetails}>Save</button>
-                            <button onClick={() => setIsModalOpen(false)}>Cancel</button>
+                            <button
+                                onClick={() => {
+                                    signOut(auth)
+                                        .then(() => {
+                                            alert('Signed out successfully!');
+                                            window.location.reload(); // Optional: Reload the page or redirect
+                                        })
+                                        .catch((error) => {
+                                            console.error('Error signing out:', error);
+                                            alert('Failed to sign out. Please try again.');
+                                        });
+                                }}
+                                className={styles.signOutButton}
+                            >
+                                Sign Out
+                            </button>
                         </div>
                     </div>
                 </div>
