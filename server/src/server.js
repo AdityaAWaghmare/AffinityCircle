@@ -4,6 +4,7 @@ const cors = require('cors');
 const { Server } = require('socket.io');
 const admin = require('./auth/firebase');
 const pool = require('./db/connection_pool');
+const { getFullProfile } = require('./routes/commonfn');
 const path = require('path');
 
 
@@ -73,6 +74,9 @@ io.on('connection', (socket) => {
         if (result.rowCount > 0) {
         socket.join(room);
         }
+        else {
+            console.log(`User ${userId} not a member of friendship conversation ${conversation_id}`);
+        }
     });
 
     // Join group room
@@ -84,6 +88,9 @@ io.on('connection', (socket) => {
         );
         if (result.rowCount > 0) {
         socket.join(room);
+        }
+        else {
+            console.log(`User ${userId} not a member of group conversation ${group_id}`);
         }
     });
 
@@ -114,6 +121,68 @@ io.on('connection', (socket) => {
         content:content,
         sent_at: new Date(),
         });
+    });
+
+    // Identity reveal request
+    socket.on('request_identity_reveal', async ({ conversation_id }) => {
+        const room = `F${conversation_id}`;
+        const result = await pool.query(
+            'SELECT user1_id, user2_id FROM friendship WHERE friendship_id = $1 AND (user1_id = $2 OR user2_id = $2)',
+            [conversation_id, userId]
+        );
+
+        if (result.rowCount > 0) {
+            const { user1_id, user2_id } = result.rows[0];
+            const columnToUpdate = user1_id === userId ? 'user2_identity_reveal_status' : 'user1_identity_reveal_status';
+
+            await pool.query(
+                `UPDATE friendship SET ${columnToUpdate} = 2 WHERE friendship_id = $1`,
+                [conversation_id]
+            );
+
+            io.to(room).emit('identity_reveal_requested', {
+                requester_id: userId,
+                conversation_id,
+            });
+        }
+    });
+
+    // Respond to identity reveal request
+    socket.on('reveal_identity', async ({ conversation_id, accept }) => {
+        const room = `F${conversation_id}`;
+        const result = await pool.query(
+            'SELECT user1_id, user2_id FROM friendship WHERE friendship_id = $1 AND (user1_id = $2 OR user2_id = $2)',
+            [conversation_id, userId]
+        );
+
+        if (result.rowCount > 0) {
+            const { user1_id, user2_id } = result.rows[0];
+            const columnToUpdate = user1_id === userId ? 'user1_identity_reveal_status' : 'user2_identity_reveal_status';
+
+            const newStatus = accept ? 1 : 0; // 1: revealed, 0: not revealed
+            await pool.query(
+                `UPDATE friendship SET ${columnToUpdate} = $1 WHERE friendship_id = $2`,
+                [newStatus, conversation_id]
+            );
+
+            if (accept) {
+                const user_data = await getFullProfile(userId);
+                io.to(room).emit('identity_reveal_response', {
+                    responder_id: userId,
+                    conversation_id,
+                    accepted: accept,
+                    user_data: user_data, // Send user data if accepted
+                });
+            }
+            else {
+                io.to(room).emit('identity_reveal_response', {
+                    responder_id: userId,
+                    conversation_id,
+                    accepted: accept,
+                    user_data: null, // No user data if not accepted
+                });
+            }
+        }
     });
 
     socket.on('disconnect', () => {

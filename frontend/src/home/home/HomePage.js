@@ -303,7 +303,7 @@ const HomePage = ({ authToken, setCurrentPage, userData, setUserData }) => {
                             bio: userData?.bio || '',
                             hobby_rating: userData?.hobby_rating || [0, 0, 0, 0, 0]
                         });
-                        setIsModalOpen(true);
+                        setIsModalOpen(!isModalOpen);
                     }}
                 >
                     {userData?.display_name}

@@ -38,7 +38,7 @@ router.get('/fetchFriendsAndGroups', async (req, res) => {
         const friendsWithProfiles = await Promise.all(
             friends.rows.map(async (friend) => {
             const profile =
-                friend.friend_reveal_status === 1
+                friend.friend_identity_reveal_status === 1
                 ? await getFullProfile(friend.friend_id)
                 : await getAnonProfile(friend.friend_id);
             return {

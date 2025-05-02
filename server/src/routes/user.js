@@ -24,6 +24,10 @@ router.post('/saveProfile', async (req, res) => {
     const { display_name, bio, hobby_rating } = req.body;
 
     try {
+        if (!display_name) {
+            return res.status(400).json({ error: 'Display name is required' });
+        }
+
         const updateUserQuery = `
             UPDATE users
             SET display_name = $1, bio = $2, hobby_rating = $3

@@ -17,9 +17,13 @@ async function verifyNewUser(req, res, next) {
       return res.status(403).json({ error: 'Access restricted to @iith.ac.in emails only' });
     }
 
+    if (!decodedToken.name){
+      return res.status(403).json({ error: 'Google Account Name is required as Verified Name.' });
+    }
+
     // Check if the user has completed onboarding by checking if acuid is assigned
     if (decodedToken.acuid) {
-      return res.status(409).json({ error: 'User already onboarded' });
+      return res.status(409).json({ error: 'Email already Registered/Onboared.' });
     }
 
     req.user = decodedToken; // attach user info to request

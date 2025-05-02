@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import styles from './ChatWindow.module.css';
 
-const GroupChatWindow = ({ authToken, setCurrentPage, userData, group, onClose }) => {
+const GroupChatWindow = ({ authToken, setCurrentPage, userData, group, handleLeaveGroup }) => {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [weekOffset, setWeekOffset] = useState(0);
@@ -19,7 +19,6 @@ const GroupChatWindow = ({ authToken, setCurrentPage, userData, group, onClose }
 
         socket.current.on('receive_group_message', (message) => {
             setMessages((prevMessages) => [...prevMessages, message]);
-            window.scrollTo(0, document.body.scrollHeight); // Reset the scrollbar to the bottom
         });
 
         return () => {
@@ -95,18 +94,18 @@ const GroupChatWindow = ({ authToken, setCurrentPage, userData, group, onClose }
 
     return (
         <div className={styles.chatWindow}>
-            <div className={styles.chatHeader}>
-                <h2 className={styles.chatTitle}>{group.group_name}</h2>
-                <button className={styles.closeButton} onClick={onClose}>
-                    ✕
-                </button>
-            </div>
-            <div className={styles.loadMore}>
-                <button onClick={loadPreviousWeek} disabled={loading}>
-                    Load Previous Week
+            <div className={styles.chatHeaderNew}>
+                <span className={styles.displayName}>{group.group_name}</span>
+                <button className={styles.actionButton} onClick={() => handleLeaveGroup(group.group_id)}>
+                    Leave Group
                 </button>
             </div>
             <div className={styles.chatBody} ref={chatBodyRef}>
+                <div className={styles.loadMore}>
+                    <button onClick={loadPreviousWeek} disabled={loading}>
+                        Load Previous Week
+                    </button>
+                </div>
                 <div className={styles.messages}>
                     {messages.map((message, index) => (
                         <div

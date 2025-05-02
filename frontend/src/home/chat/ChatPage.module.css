@@ -43,15 +43,68 @@
     cursor: pointer;
 }
 
+/* Dropdown Content */
+.dropdownContent {
+    display: flex;
+    justify-content: space-between; /* Separate details and buttons */
+    gap: 20px; /* Add spacing between containers */
+    padding: 10px;
+    background-color: #007bff; /* Match the header's blue background */
+    border-radius: 8px;
+    color: white;
+    border: 1px solid #0056b3; /* Add a border for better visibility */
+}
+
+/* Details Container */
+.detailsContainer {
+    flex: 1; /* Take up available space */
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Add spacing between rows */
+    background-color: #0056b3; /* Slightly darker background for contrast */
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #004494; /* Add a border for distinction */
+}
+
+/* Reveal Buttons Container */
+.revealButtonsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Align buttons to the right */
+    gap: 10px; /* Add spacing between buttons */
+    background-color: #0056b3; /* Slightly darker background for contrast */
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #004494; /* Add a border for distinction */
+}
+
+/* User Info Row */
+.userDetailRow {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px; /* Space between title and value */
+}
+
+/* Detail Title */
+.detailTitle {
+    font-weight: bold;
+    color: #d1e7ff; /* Light blue for titles */
+    min-width: 100px; /* Ensure consistent alignment */
+}
+
+/* Action Button */
 .actionButton {
-    background-color: #ff4d4d;
+    background-color: #ff4d4d; /* Red button color */
     color: white;
     border: none;
     border-radius: 5px;
-    padding: 5px 10px;
+    padding: 10px 15px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .actionButton:hover {
-    background-color: #ff1a1a;
+    background-color: #ff1a1a; /* Darker red on hover */
 }

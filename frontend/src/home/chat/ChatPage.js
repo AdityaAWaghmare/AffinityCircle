@@ -107,7 +107,8 @@ const ChatPage = ({ authToken, setCurrentPage, userData }) => {
                     setCurrentPage={setCurrentPage}
                     userData={userData}
                     friendship={activeChat.friendship}
-                    onClose={() => setActiveChat(null)} // Close the chat window
+                    handleUnfriend ={handleUnfriend}
+                    // onClose={() => setActiveChat(null)} // Close the chat window
                 />
             );
         }
@@ -118,7 +119,8 @@ const ChatPage = ({ authToken, setCurrentPage, userData }) => {
                     setCurrentPage={setCurrentPage}
                     userData={userData}
                     group={activeChat.group}
-                    onClose={() => setActiveChat(null)} // Close the chat window
+                    handleLeaveGroup={handleLeaveGroup}
+                    // onClose={() => setActiveChat(null)} // Close the chat window
                 />
             );
         }
@@ -141,12 +143,6 @@ const ChatPage = ({ authToken, setCurrentPage, userData }) => {
                             <span onClick={() => setActiveChat({ friendship:friend })}>
                             {friend.profile.display_name} {friend.profile.verified_name && `(${friend.profile.verified_name})`}
                             </span>
-                            <button
-                                className={styles.actionButton}
-                                onClick={() => handleUnfriend(friend.friend_id)}
-                            >
-                                Unfriend
-                            </button>
                         </div>
                     ))}
                 </div>
@@ -161,12 +157,6 @@ const ChatPage = ({ authToken, setCurrentPage, userData }) => {
                             <span onClick={() => setActiveChat({ group:group })}>
                                 {group.group_name}
                             </span>
-                            <button
-                                className={styles.actionButton}
-                                onClick={() => handleLeaveGroup(group.group_id)}
-                            >
-                                Leave Group
-                            </button>
                         </div>
                     ))}
                 </div>

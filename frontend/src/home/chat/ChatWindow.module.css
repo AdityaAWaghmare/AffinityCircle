@@ -1,32 +1,198 @@
+/* Chat Window */
+.chatWindow {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Full viewport height */
+    width: 100%; /* Full width */
+    background: #f9f9f9; /* Light background color */
+    box-sizing: border-box; /* Include padding and border in the width/height */
+    overflow: hidden; /* Prevent overflow */
+}
+
 /* Chat Header */
 .chatHeader {
     display: flex;
-    justify-content: space-between; /* Space between name and close button */
-    align-items: center; /* Align items vertically */
+    flex-direction: column; /* Allow vertical expansion */
+    justify-content: space-between;
+    align-items: flex-start;
     padding: 10px 20px;
-    background: #0078d4;
+    background: #0078d4; /* Dark blue background */
     color: white;
-    position: fixed; /* Fix the header at the top */
-    top: 0; /* Align to the top */
+    position: fixed;
+    top: 0;
     width: 100%;
+    transition: height 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 10; /* Ensure it stays above other elements */
-    box-sizing: border-box; /* Include padding and border in the width */
-    height: 60px; /* Set a fixed height for the header */
+    z-index: 10;
+    box-sizing: border-box;
+    height: 50px; /* Default height */
+    overflow: hidden; /* Hide dropdown content when collapsed */
 }
 
-.chatTitle {
-    font-size: 1.5rem;
-    margin: 0;
+.expandedHeader {
+    height: auto; /* Allow height to expand */
+    padding-bottom: 20px; /* Add space for dropdown content */
+    transition: height 0.3s ease;
 }
 
-.closeButton {
+/* Header Content */
+.chatHeaderContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+/* User Details on the Left */
+.userDetails {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px; /* Add spacing between details */
+    flex: 1; /* Take up available space */
+}
+
+.userAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Circular avatar */
+    background-color: #005bb5; /* Placeholder background color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.displayName {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+}
+
+/* New Chat Header Style */
+.chatHeaderNew {
+    display: flex;
+    justify-content: space-between; /* Align name to the left and button to the right */
+    align-items: center; /* Vertically center items */
+    padding: 10px 20px;
+    background-color: #0078d4; /* Dark blue background */
+    color: white;
+    border-bottom: 1px solid #ccc; /* Optional border for separation */
+}
+
+.bio {
+    font-size: 0.9rem;
+    color: #d1e7ff; /* Light blue for bio */
+}
+
+/* Revealed Details */
+.revealedDetails {
+    margin-top: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+/* Verified Name */
+.verifiedName {
+    font-size: 1rem;
+    color: #ffcc00; /* Gold color for verified name */
+    font-weight: bold;
+}
+
+/* Email */
+.email {
+    font-size: 0.9rem;
+    color: #d1e7ff; /* Light blue for email */
+}
+
+/* Dropdown Button */
+.dropdownButton {
     background: none;
     border: none;
     color: white;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     cursor: pointer;
     outline: none;
+}
+
+/* Dropdown Content */
+.dropdownContent {
+    display: flex;
+    justify-content: space-between; /* Separate details and buttons */
+    gap: 30px; /* Add spacing between containers */
+    padding: 10px;
+    background-color: #0078d4; /* Match the header's dark blue background */
+    border-radius: 8px;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for separation */
+}
+
+/* Details Container */
+.detailsContainer {
+    flex: 1; /* Take up available space */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Add spacing between rows */
+    background-color: transparent; /* Match the background color */
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: none; /* Remove shadow for a flat look */
+}
+
+/* User Info Row */
+.userDetailRow {
+    display: flex;
+    flex-direction: column; /* Stack title and value vertically */
+    gap: 5px; /* Add spacing between title and value */
+}
+
+/* Detail Title */
+.detailTitle {
+    font-weight: bold;
+    color: #d1e7ff; /* Light blue for titles */
+}
+
+/* Detail Value */
+.detailValue {
+    font-size: 0.9rem;
+    color: white; /* White for values */
+}
+
+/* Reveal Buttons Container */
+.revealButtonsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Align buttons to the right */
+    gap: 10px; /* Add spacing between buttons */
+    background-color: transparent; /* Match the background color */
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: none; /* Remove shadow for a flat look */
+}
+
+/* Action Button */
+.actionButton {
+    background: linear-gradient(90deg, #0078d4, #005bb5); /* Gradient for a modern look */
+    color: white;
+    border: none;
+    border-radius: 20px; /* Rounded corners */
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease; /* Smooth hover and click effects */
+}
+
+.actionButton:hover {
+    background: linear-gradient(90deg, #005bb5, #003f8a); /* Darker gradient on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.actionButton:active {
+    transform: scale(0.95); /* Slightly shrink on click */
 }
 
 /* Adjust chat body to account for fixed header and footer */
@@ -171,4 +337,96 @@
     color: #555;
     margin-top: 5px;
     text-align: right;
+}
+
+.identityReveal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 5px 0px 5px 0px;
+    padding: 5px;
+    background-color: #10508d;
+    border: 1px solid #10508d;
+    border-radius: 5px;
+}
+
+.identityReveal button {
+    background-color: #10508d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin: 0px;
+    transition: background-color 0.3s;
+}
+
+.identityReveal button:hover {
+    background-color: #005bb5;
+}
+
+.identityReveal p {
+    font-size: 1rem;
+    color: #555;
+    margin: 5px 0;
+}
+
+/* Dropdown Container */
+.dropdown {
+    position: absolute;
+    top: 100%; /* Position below the header */
+    right: 10px; /* Align to the right */
+    background-color: #f1f1f1; /* Light gray background for consistency */
+    border: 1px solid #ccc; /* Subtle border for separation */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slightly stronger shadow for depth */
+    padding: 10px; /* Add padding inside the dropdown */
+    z-index: 100; /* Ensure it appears above other elements */
+    min-width: 220px; /* Set a minimum width */
+    opacity: 0; /* Start hidden */
+    transform: translateY(-10px); /* Start slightly above */
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth opening animation */
+    display: none; /* Initially hidden */
+}
+
+/* Dropdown Visible State */
+.dropdownVisible {
+    display: block; /* Show dropdown */
+    opacity: 1; /* Fully visible */
+    transform: translateY(0); /* Reset position */
+}
+
+/* Dropdown Buttons Container */
+.dropdownrevealbutton {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: center; /* Center buttons horizontally */
+    gap: 10px; /* Add spacing between buttons */
+}
+
+/* Dropdown Buttons */
+.dropdownrevealbutton button {
+    background-color: #005bb5; /* Appealing dark bluish color */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 15px; /* Add padding for better click area */
+    font-size: 1rem; /* Standard font size */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effect */
+}
+
+/* Dropdown Buttons Hover Effect */
+.dropdownrevealbutton button:hover {
+    background-color: #003f8a; /* Slightly darker blue on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+/* Dropdown Title (Optional) */
+.dropdown h3 {
+    font-size: 1.2rem; /* Slightly larger font */
+    color: #333; /* Darker text color */
+    margin-bottom: 10px; /* Space below the title */
+    text-align: center; /* Center align the title */
 }
