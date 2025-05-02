@@ -30,6 +30,8 @@ services:
     build:
       context: ./recommender
       dockerfile: Dockerfile
+    ports:
+      - "8000:8000" # Bind to all network interfaces
     environment:
       - DB_HOST=db
       - DB_NAME=ac
@@ -45,7 +47,7 @@ services:
   server: # Developing
     build:
       context: ./server
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     ports:
       - "0.0.0.0:5000:5000" # Bind to all network interfaces
     environment:
@@ -53,6 +55,7 @@ services:
       - DB_NAME=ac
       - DB_USER=ac
       - DB_PASSWORD=ac
+      - CREATE_GROUP_FOR=1
     depends_on:
       db:
         condition: service_healthy

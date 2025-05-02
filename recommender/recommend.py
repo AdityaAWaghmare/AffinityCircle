@@ -109,6 +109,7 @@ def create_new_group(connection_pool, group_name):
 
     # Insert the farthest cluster center as a new group into the database
     hobby_rating_list = farthest_cluster_center.tolist()
+
     success = write_db.insert_new_group(connection_pool, group_name, hobby_rating_list)
 
     return 200 if success else 500

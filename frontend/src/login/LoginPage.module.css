@@ -5,8 +5,8 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #023449, #898c97);
-    min-height: 90vh;
+    background: linear-gradient(135deg, #016894, #898c97);
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;

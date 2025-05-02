@@ -196,22 +196,22 @@ $$ LANGUAGE plpgsql;
 
 ----------------------------------------------- EXAMPLES -------------------------------------------------
 
-INSERT INTO users (email, verified_name, display_name, bio, hobby_rating)
-VALUES
-('a@int.ac.in' , 'ico_A' , 'A' , 'bio_A' , '{4 , 5 , 7 , 3 , 1}'),
-('b@int.ac.in' , 'ico_B' , 'B' , 'bio_B' , '{3 , 4 , 5 , 2 , 1}'),
-('c@int.ac.in' , 'ico_C' , 'C' , 'bio_C' , '{2 , 3 , 4 , 1 , 1}'),
-('d@int.ac.in' , 'ico_D' , 'D' , 'bio_D' , '{10 , 9 , 1 , 10 , 10}'),
-('e@int.ac.in' , 'ico_E' , 'E' , 'bio_E' , '{1 , 2 , 3 , 4 , 5}'),
-('f@int.ac.in' , 'ico_F' , 'F' , 'bio_F' , '{10 , 3 , 4 , 5 , 6}'),
-('g@int.ac.in' , 'ico_G' , 'G' , 'bio_G' , '{10 , 2 , 3 , 4 , 5}')
-;
+-- INSERT INTO users (email, verified_name, display_name, bio, hobby_rating)
+-- VALUES
+-- ('a@iith.ac.in' , 'ico_A' , 'A' , 'bio_A' , '{4 , 5 , 7 , 3 , 1}'),
+-- ('b@iith.ac.in' , 'ico_B' , 'B' , 'bio_B' , '{3 , 4 , 5 , 2 , 1}'),
+-- ('c@iith.ac.in' , 'ico_C' , 'C' , 'bio_C' , '{2 , 3 , 4 , 1 , 1}'),
+-- ('d@iith.ac.in' , 'ico_D' , 'D' , 'bio_D' , '{10 , 9 , 1 , 10 , 10}'),
+-- ('e@iith.ac.in' , 'ico_E' , 'E' , 'bio_E' , '{1 , 2 , 3 , 4 , 5}'),
+-- ('f@iith.ac.in' , 'ico_F' , 'F' , 'bio_F' , '{10 , 3 , 4 , 5 , 6}'),
+-- ('g@iith.ac.in' , 'ico_G' , 'G' , 'bio_G' , '{10 , 2 , 3 , 4 , 5}')
+-- ;
 
-INSERT INTO groups (group_name, hobby_rating)
-VALUES
-('group_A' , '{1 , 2 , 3 , 4 , 5}'),
-('group_B' , '{2 , 3 , 4 , 5 , 6}'),
-('group_C' , '{3 , 4 , 5 , 6 , 7}'),
-('group_D' , '{4 , 5 , 6 , 7 , 8}'),
-('group_E' , '{5 , 6 , 7 , 8 , 9}') 
-;
+-- INSERT INTO groups (group_name, hobby_rating)
+-- VALUES
+-- ('group_A' , '{1 , 2 , 3 , 4 , 5}'),
+-- ('group_B' , '{2 , 3 , 4 , 5 , 6}'),
+-- ('group_C' , '{3 , 4 , 5 , 6 , 7}'),
+-- ('group_D' , '{4 , 5 , 6 , 7 , 8}'),
+-- ('group_E' , '{5 , 6 , 7 , 8 , 9}') 
+-- ;

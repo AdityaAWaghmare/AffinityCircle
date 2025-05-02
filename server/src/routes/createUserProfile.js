@@ -2,6 +2,7 @@ const router = require('express').Router();
 const pool = require('../db/connection_pool');
 const { verifyNewUser, setCustomClaims } = require('../auth/newUser'); // Import the auth middleware
 const axios = require('axios'); // Import axios for making HTTP requests
+const createGroupFor = parseInt(process.env.CREATE_GROUP_FOR, 10) || 10;
 
 router.use(verifyNewUser); // Use the authUser middleware for all routes in this router
 
@@ -33,25 +34,21 @@ router.post('/createUserProfile', async (req, res) => {
         await setCustomClaims(uid, claims);
 
         // Create a new group for every tenth user
-        if (userId % 10 === 0) {
+        if (userId % createGroupFor === 0) {
             const groupName = `Group_${userId}`;
+            // Call the /create_group API in app.py
+            const recommenderServiceUrl = process.env.RECOMMENDER_URL;
             try {
-                // Call the /create_group API in app.py
-                const response = await axios.post('http://localhost:5000/create_group', {
+                const response = await axios.post(`${recommenderServiceUrl}/create_group`, {
                     group_name: groupName,
                 });
-                console.log(`Group created successfully: ${response.data.message}`);
-
-                // Add the group to the recommendation system
-                const recommenderServiceUrl = process.env.RECOMMENDER_URL || 'http://localhost:5000';
-                await axios.post(`${recommenderServiceUrl}/recommend_groups`, {
-                    user: userId,
-                }, {
-                    headers: { 'Content-Type': 'application/json' },
-                });
-                console.log(`Group added to recommendations for user ${userId}`);
-            } catch (groupError) {
-                console.error('Error creating group or adding to recommendations:', groupError.response?.data || groupError.message);
+                console.log('Group Created Successfully:', response.data.message);
+            } catch (error) {
+                if (error.response) {
+                    console.error('Error Creating Group:', error.response.data.error);
+                } else {
+                    console.error('Error Creating group:', error.message);
+                }
             }
         }
 
