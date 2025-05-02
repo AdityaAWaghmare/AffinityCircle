@@ -34,6 +34,7 @@ const MainPage = ({ authToken, setCurrentPage }) => {
                     authToken={authToken}
                     setCurrentPage={setCurrentPage}
                     userData={userData}
+                    refreshSection={refreshSection} // Pass the refresh
                 />
             )}
 

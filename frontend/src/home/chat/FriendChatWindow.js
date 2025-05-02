@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import styles from './ChatWindow.module.css';
 
-const FriendChatWindow = ({ authToken, setCurrentPage, userData, friendship, handleUnfriend }) => {
+const FriendChatWindow = ({ authToken, setCurrentPage, userData, friendship, refreshSection }) => {
     const [friendProfile, setFriendProfile] = useState(friendship.profile);
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -124,6 +124,33 @@ const FriendChatWindow = ({ authToken, setCurrentPage, userData, friendship, han
         }
     };
 
+    const handleUnfriend = async (friendId) => {
+        try {
+            const response = await fetch(process.env.REACT_APP_API_URL + '/api/chat/unfriendUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${authToken}`
+                },
+                body: JSON.stringify({ friend_id: friendId })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                alert('Successfully unfriended the user');
+                refreshSection();
+            }
+            else if (response.status === 401 || response.status === 409) {
+                alert(data.error);
+                setCurrentPage('login');
+            }
+            else {
+                alert(data.error);
+            }
+        } catch (error) {
+            console.error('Error unfriending user:', error);
+        }
+    };
+
     useEffect(() => {
         // Scroll to the bottom whenever messages change
         if (chatBodyRef.current) {
@@ -184,7 +211,7 @@ const FriendChatWindow = ({ authToken, setCurrentPage, userData, friendship, han
                                     Reveal Identity
                                 </button>
                             )}
-                            <button className={styles.disactionButton} onClick={() => handleUnfriend(friendship.friendship_id)}>
+                            <button className={styles.disactionButton} onClick={() => handleUnfriend(friendship.friend_id)}>
                                 Unfriend
                             </button>
                         </div>

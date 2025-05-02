@@ -9,6 +9,4 @@ Software Engineering project
 * Gaurav Choudekar
 * Siddhant Godbole
 
-Useful Commands:
-
-- psql -U acteam -d ac_db, SELECT * FROM GROUPS;
+Compose and run: docker compose -f docker-compose.yml up --build

@@ -3,7 +3,7 @@ import styles from './ChatPage.module.css';
 import FriendChatWindow from './FriendChatWindow';
 import GroupChatWindow from './GroupChatWindow';
 
-const ChatPage = ({ authToken, setCurrentPage, userData }) => {
+const ChatPage = ({ authToken, setCurrentPage, userData, refreshSection }) => {
     const [friends, setFriends] = useState([]);
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -40,60 +40,6 @@ const ChatPage = ({ authToken, setCurrentPage, userData }) => {
         fetchFriendsAndGroups();
     }, [authToken, setCurrentPage]);
 
-    const handleUnfriend = async (friendId) => {
-        try {
-            const response = await fetch(process.env.REACT_APP_API_URL + '/api/chat/unfriendUser', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${authToken}`
-                },
-                body: JSON.stringify({ friend_id: friendId })
-            });
-            const data = await response.json();
-            if (response.ok) {
-                setFriends(friends.filter(friend => friend.friend_id !== friendId));
-                alert('Successfully unfriended the user');
-            }
-            else if (response.status === 401 || response.status === 409) {
-                alert(data.error);
-                setCurrentPage('login');
-            }
-            else {
-                alert(data.error);
-            }
-        } catch (error) {
-            console.error('Error unfriending user:', error);
-        }
-    };
-
-    const handleLeaveGroup = async (groupId) => {
-        try {
-            const response = await fetch(process.env.REACT_APP_API_URL + '/api/chat/leaveGroup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${authToken}`
-                },
-                body: JSON.stringify({ group_id: groupId })
-            });
-            const data = await response.json();
-            if (response.ok) {
-                setGroups(groups.filter(group => group.group_id !== groupId));
-                alert('Successfully left the group');
-            }
-            else if (response.status === 401 || response.status === 409) {
-                alert(data.error);
-                setCurrentPage('login');
-            }
-            else {
-                alert(data.error);
-            }
-        } catch (error) {
-            console.error('Error leaving group:', error);
-        }
-    };
-
     if (loading) {
         return <div className={styles.loading}>Loading...</div>;
     }
@@ -107,7 +53,7 @@ const ChatPage = ({ authToken, setCurrentPage, userData }) => {
                     setCurrentPage={setCurrentPage}
                     userData={userData}
                     friendship={activeChat.friendship}
-                    handleUnfriend ={handleUnfriend}
+                    refreshSection={refreshSection} // Pass the refresh
                     // onClose={() => setActiveChat(null)} // Close the chat window
                 />
             );
@@ -119,7 +65,7 @@ const ChatPage = ({ authToken, setCurrentPage, userData }) => {
                     setCurrentPage={setCurrentPage}
                     userData={userData}
                     group={activeChat.group}
-                    handleLeaveGroup={handleLeaveGroup}
+                    refreshSection={refreshSection} // Pass the refresh
                     // onClose={() => setActiveChat(null)} // Close the chat window
                 />
             );

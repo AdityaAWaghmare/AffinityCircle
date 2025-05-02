@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import styles from './ChatWindow.module.css';
 
-const GroupChatWindow = ({ authToken, setCurrentPage, userData, group, handleLeaveGroup }) => {
+const GroupChatWindow = ({ authToken, setCurrentPage, userData, group, refreshSection }) => {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [weekOffset, setWeekOffset] = useState(0);
@@ -80,6 +80,33 @@ const GroupChatWindow = ({ authToken, setCurrentPage, userData, group, handleLea
 
         socket.current.emit('send_group_message', messageData);
         setNewMessage('');
+    };
+
+    const handleLeaveGroup = async (groupId) => {
+        try {
+            const response = await fetch(process.env.REACT_APP_API_URL + '/api/chat/leaveGroup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${authToken}`
+                },
+                body: JSON.stringify({ group_id: groupId })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                alert('Successfully left the group');
+                refreshSection();
+            }
+            else if (response.status === 401 || response.status === 409) {
+                alert(data.error);
+                setCurrentPage('login');
+            }
+            else {
+                alert(data.error);
+            }
+        } catch (error) {
+            console.error('Error leaving group:', error);
+        }
     };
 
     useEffect(() => {
