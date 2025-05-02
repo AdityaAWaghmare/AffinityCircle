@@ -141,7 +141,10 @@ const ChatPage = ({ authToken, setCurrentPage, userData }) => {
                     {friends.map((friend, index) => (
                         <div key={index} className={styles.listItem}>
                             <span onClick={() => setActiveChat({ friendship:friend })}>
-                            {friend.profile.display_name} {friend.profile.verified_name && `(${friend.profile.verified_name})`}
+                            {friend.profile.display_name}{' '}
+                            {friend.profile.verified_name && (
+                                <span className={styles.verifiedName}>({friend.profile.verified_name})</span>
+                            )}
                             </span>
                         </div>
                     ))}

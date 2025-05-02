@@ -96,7 +96,7 @@ const GroupChatWindow = ({ authToken, setCurrentPage, userData, group, handleLea
         <div className={styles.chatWindow}>
             <div className={styles.chatHeaderNew}>
                 <span className={styles.displayName}>{group.group_name}</span>
-                <button className={styles.actionButton} onClick={() => handleLeaveGroup(group.group_id)}>
+                <button className={styles.disactionButton} onClick={() => handleLeaveGroup(group.group_id)}>
                     Leave Group
                 </button>
             </div>

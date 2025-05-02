@@ -2,7 +2,7 @@
 .chatWindow {
     display: flex;
     flex-direction: column;
-    height: 100vh; /* Full viewport height */
+    height: auto; /* Full viewport height */
     width: 100%; /* Full width */
     background: #f9f9f9; /* Light background color */
     box-sizing: border-box; /* Include padding and border in the width/height */
@@ -186,6 +186,19 @@
     transition: background 0.3s ease, transform 0.2s ease; /* Smooth hover and click effects */
 }
 
+.disactionButton {
+    background: linear-gradient(90deg, #f16262, #005bb5); /* Gradient for a modern look */
+    color: white;
+    border: none;
+    border-radius: 20px; /* Rounded corners */
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease; /* Smooth hover and click effects */
+}
+
+
 .actionButton:hover {
     background: linear-gradient(90deg, #005bb5, #003f8a); /* Darker gradient on hover */
     transform: scale(1.05); /* Slightly enlarge on hover */
@@ -340,25 +353,26 @@
 }
 
 .identityReveal {
+    position: fixed;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    margin: 5px 0px 5px 0px;
-    padding: 5px;
-    background-color: #10508d;
-    border: 1px solid #10508d;
+    margin: 79vh 40px 100px 55px;
+    padding: 1px 10px;
+    /* background-color: linear-gradient(90deg, #005bb5, #003f8a); */
+    /* border: 0.5px solid #10508d; */
     border-radius: 5px;
 }
 
 .identityReveal button {
     background-color: #10508d;
-    color: white;
+    color: rgb(255, 255, 255);
     border: none;
     border-radius: 5px;
-    padding: 8px 5px;
+    padding: 8px 8px;
     font-size: 1rem;
     cursor: pointer;
-    margin: 0px;
+    margin: 10px;
     transition: background-color 0.3s;
 }
 

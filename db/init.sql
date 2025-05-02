@@ -207,11 +207,11 @@ $$ LANGUAGE plpgsql;
 -- ('g@iith.ac.in' , 'ico_G' , 'G' , 'bio_G' , '{10 , 2 , 3 , 4 , 5}')
 -- ;
 
--- INSERT INTO groups (group_name, hobby_rating)
--- VALUES
--- ('group_A' , '{1 , 2 , 3 , 4 , 5}'),
--- ('group_B' , '{2 , 3 , 4 , 5 , 6}'),
--- ('group_C' , '{3 , 4 , 5 , 6 , 7}'),
--- ('group_D' , '{4 , 5 , 6 , 7 , 8}'),
--- ('group_E' , '{5 , 6 , 7 , 8 , 9}') 
--- ;
+INSERT INTO groups (group_name, hobby_rating)
+VALUES
+('Fitness' , '{10 , 0 , 0 , 0 , 0}'),
+('Music' , '{0 , 10 , 0 , 0 , 0}'),
+('Study habits' , '{0 , 0 , 10 , 0 , 0}'),
+('Animal interest' , '{0 , 0 , 0 , 10 , 0}'),
+('Languages' , '{0 , 0 , 0 , 0 , 10}') 
+;

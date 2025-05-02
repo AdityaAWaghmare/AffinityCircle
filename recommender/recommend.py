@@ -82,11 +82,10 @@ def create_new_group(connection_pool, group_name):
 
     users_data = read_db.get_all_users_from_db(connection_pool)
     groups_data = read_db.get_all_groups_from_db(connection_pool)
-    if not users_data or not groups_data:
-        return []
+    if not users_data:
+        return 500
 
     users_data_array = np.array([[i] + lst for (i, lst) in users_data], dtype=np.float32)
-    groups_data_array = np.array([[i] + lst for (i, lst) in groups_data], dtype=np.float32)
 
     # Normalize user feature vectors (excluding ID column) for closer approximation of cosine through euclidean k means
     users_data_array[:, 1:] = normalize(users_data_array[:, 1:], norm='l2', axis=1)
@@ -100,6 +99,13 @@ def create_new_group(connection_pool, group_name):
     # Get the cluster centers
     cluster_centers = kmeans.cluster_centers_
 
+    if not groups_data:
+        # If there are no existing groups, create a new group with the first cluster center
+        hobby_rating_list = cluster_centers[0].tolist()
+        success = write_db.insert_new_group(connection_pool, group_name, hobby_rating_list)
+        return 200 if success else 500
+    
+    groups_data_array = np.array([[i] + lst for (i, lst) in groups_data], dtype=np.float32)
     # Compute similarities between cluster centers and existing groups
     similarities = cosine_similarity(cluster_centers, groups_data_array[:, 1:])
 
@@ -111,5 +117,4 @@ def create_new_group(connection_pool, group_name):
     hobby_rating_list = farthest_cluster_center.tolist()
 
     success = write_db.insert_new_group(connection_pool, group_name, hobby_rating_list)
-
     return 200 if success else 500

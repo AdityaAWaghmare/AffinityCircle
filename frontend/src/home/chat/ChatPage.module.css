@@ -31,6 +31,7 @@
     padding: 10px;
     background-color: #f0f0f0;
     border: 1px solid #ccc;
+    box-shadow: #000000 1px 1px 5px;
     border-radius: 5px;
 }
 
@@ -107,4 +108,9 @@
 
 .actionButton:hover {
     background-color: #ff1a1a; /* Darker red on hover */
+}
+
+.verifiedName {
+    font-style: italic;
+    color: #06633c; /* Replace with your desired color */
 }

@@ -184,7 +184,7 @@ const FriendChatWindow = ({ authToken, setCurrentPage, userData, friendship, han
                                     Reveal Identity
                                 </button>
                             )}
-                            <button className={styles.actionButton} onClick={() => handleUnfriend(friendship.friendship_id)}>
+                            <button className={styles.disactionButton} onClick={() => handleUnfriend(friendship.friendship_id)}>
                                 Unfriend
                             </button>
                         </div>
